@@ -1,5 +1,7 @@
 package com.company.jurl;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -24,6 +26,8 @@ public class HttpClient {
     private Map<String, List<String>> responseHeaders;
     private String responseBody;
 
+    private static boolean isImage;
+
     /**
      * constructor method
      * create URL and establish connection
@@ -34,6 +38,8 @@ public class HttpClient {
      * @param body body of request
      */
     public HttpClient(String urlString, String method, HashMap<String, String> header,HashMap<String, String> body) {
+        isImage = false;
+
         try {
             if(!urlString.startsWith("http://")){
                 urlString = "http://" + urlString;
@@ -80,10 +86,25 @@ public class HttpClient {
             //response headers :
             responseHeaders = connection.getHeaderFields();
 
+            //image preview body:
+            for(Map.Entry<String, List<String>> entry : responseHeaders.entrySet()) {
+                if(entry.getKey() != null){
+                    if (entry.getKey().equals("Content-Type")) {
+                    if (entry.getValue().contains("image/png")) {
+                        isImage = true;
+                        saveImagePreviewResponse(url);
+                        break;
+                    }
+                    }
+                }
+            }
+
+            // time of response :
             long finish = System.currentTimeMillis();
             long totalTime = (finish - start) ;
             time = String.valueOf(Math.round(totalTime * 100.0) / 100000.0);
 
+            // status of response :
             for(Map.Entry<String, List<String>> entry : responseHeaders.entrySet()){
                 if(entry.getKey() == null){
                     status = entry.getValue().toString();
@@ -91,7 +112,7 @@ public class HttpClient {
                 }
             }
 
-            // size of response body :
+            // size of response:
             byte[] responseBytes= responseBody.getBytes();
             Double sizeLong = Double.valueOf(responseBytes.length) / 1000;
             size = Double.toString(sizeLong);
@@ -166,4 +187,22 @@ public class HttpClient {
         bufferedOutputStream.close();
     }
 
+    public void saveImagePreviewResponse(URL url){
+        String path = "./image.png";
+        BufferedImage image = null;
+        try {
+            image = ImageIO.read(url);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            ImageIO.write(image, "png", new File(path));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static boolean isImage() {
+        return isImage;
+    }
 }

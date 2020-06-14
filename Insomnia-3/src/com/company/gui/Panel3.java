@@ -1,9 +1,13 @@
 package com.company.gui;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +27,8 @@ public class Panel3 extends JPanel {
 
     // body panel :
     private JPanel responseBodyPanel;
+
+    private JPanel buttonGroupPanelForBody;
 
     private JRadioButton radioButtonRaw;
     private JPanel rawPanel;
@@ -142,23 +148,26 @@ public class Panel3 extends JPanel {
         setRawPanel();
         setPreviewPanel();
 
+        radioButtonRaw.setSelected(true);
+
         radioButtonRaw.addActionListener(new RadioButtonHandler());
         radioButtonPreview.addActionListener(new RadioButtonHandler());
 
         ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(radioButtonRaw);
         buttonGroup.add(radioButtonPreview);
-        radioButtonRaw.setSelected(true);
 
-        JPanel buttonGroupPanel = new JPanel();
-        buttonGroupPanel.setLayout(new FlowLayout());
-        buttonGroupPanel.add(radioButtonRaw);
-        buttonGroupPanel.add(radioButtonPreview);
+        buttonGroupPanelForBody = new JPanel();
+        buttonGroupPanelForBody.setLayout(new FlowLayout());
+        buttonGroupPanelForBody.add(radioButtonRaw);
+        buttonGroupPanelForBody.add(radioButtonPreview);
+        buttonGroupPanelForBody.setVisible(true);
 
         responseBodyPanel = new JPanel();
         responseBodyPanel.setLayout(new BorderLayout());
-        responseBodyPanel.add(buttonGroupPanel, BorderLayout.NORTH);
 
+        responseBodyPanel.add(new JScrollPane(buttonGroupPanelForBody), BorderLayout.NORTH);
+        responseBodyPanel.add(previewPanel, BorderLayout.CENTER);
         responseBodyPanel.add(rawPanel, BorderLayout.CENTER);
     }
 
@@ -176,7 +185,11 @@ public class Panel3 extends JPanel {
         rawText.setText(" -[ Response Body]-");
         rawText.setEditable(false);
 
-        rawPanel.add(new JScrollPane(rawText), BorderLayout.CENTER);
+        JPanel textPanel = new JPanel();
+        textPanel.setLayout(new BorderLayout());
+        textPanel.add(rawText, BorderLayout.CENTER);
+
+        rawPanel.add(new JScrollPane(textPanel), BorderLayout.CENTER);
     }
 
     /**
@@ -185,6 +198,7 @@ public class Panel3 extends JPanel {
     public void setPreviewPanel(){
         radioButtonPreview = new JRadioButton("Preview");
         previewPanel = new JPanel();
+        previewPanel.setLayout(new BorderLayout());
     }
 
     //todo : copy button handler
@@ -210,12 +224,15 @@ public class Panel3 extends JPanel {
             // panel 3 :
             if (radioButtonRaw.isSelected()) {
                 rawPanel.setVisible(true);
-                responseBodyPanel.add(rawPanel, BorderLayout.CENTER);
+                //todo : pak
+//                responseBodyPanel.add(buttonGroupPanelForBody, BorderLayout.NORTH);
+//                responseBodyPanel.add(rawPanel, BorderLayout.CENTER);
                 previewPanel.setVisible(false);
                 Panel3.this.updateUI();
             } else if (radioButtonPreview.isSelected()) {
                 previewPanel.setVisible(true);
-                responseBodyPanel.add(previewPanel, BorderLayout.CENTER);
+                //todo : pak
+//                responseBodyPanel.add(previewPanel, BorderLayout.CENTER);
                 rawPanel.setVisible(false);
                 Panel3.this.updateUI();
             }
@@ -285,10 +302,31 @@ public class Panel3 extends JPanel {
 
     public void setInformationPanel(String status, String size, String time){
         statusField.setText(status);
-        //todo
         sizeField.setText(size);
-        //todo
         timeField.setText(time);
     }
 
+    public void addImageToPreviewPanel(){
+        previewPanel.add(new LoadImageApp(), BorderLayout.CENTER);
+        previewPanel.setVisible(true);
+        responseBodyPanel.add(previewPanel, BorderLayout.CENTER);
+        updateUI();
+    }
+
+    private class LoadImageApp extends Component {
+
+        BufferedImage img;
+
+        public void paint(Graphics g) {
+            g.drawImage(img, 0, 0, null);
+        }
+
+        public LoadImageApp() {
+            try {
+                img = ImageIO.read(new File("./image.png"));
+            } catch (IOException e) {
+            }
+
+        }
+    }
 }

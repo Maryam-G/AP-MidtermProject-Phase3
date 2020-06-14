@@ -19,6 +19,7 @@ public class FileUtils {
         boolean directoryCreated0 = new File("./Requests/").mkdirs();
         boolean directoryCreated1 = new File("./Requests/AllCollections/").mkdirs();
         boolean directoryCreated2 = new File("./Responses/").mkdirs();
+        boolean directoryCreated3 = new File("./Responses/Images").mkdirs();
     }
 
     /**
@@ -141,5 +142,6 @@ public class FileUtils {
             e.printStackTrace();
         }
     }
+
 
 }

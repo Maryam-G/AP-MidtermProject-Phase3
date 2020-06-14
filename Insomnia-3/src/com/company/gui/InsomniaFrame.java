@@ -1,6 +1,7 @@
 package com.company.gui;
 
 import com.company.controller.Controller;
+import com.company.jurl.HttpClient;
 import com.company.jurl.Jurl;
 
 import javax.swing.*;
@@ -9,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.net.HttpURLConnection;
 import java.sql.SQLOutput;
 
 /**
@@ -179,23 +181,21 @@ public class InsomniaFrame extends JFrame{
         controller.setRequestBody(panel2.getBody());
 
         controller.createJurl();
-        //todo : pak kardan e ezafiat
-//        System.out.println(controller.getUrlAddress());
-//        System.out.println(controller.getMethod());
-//        System.out.println(controller.getRequestHeaders());
-//        System.out.println(controller.getRequestBody());
-//        System.out.println(controller.getRequestHeadersString());
-//        System.out.println(controller.getRequestBodyString());
     }
 
     public void setResponseGUI(){
         panel3.setHeadersPanel(controller.getResponseHeaders());
+
         panel3.setRawBodyPanel(controller.getResponseBody());
 
         String status = "[ " + controller.getStatus().substring(10, controller.getStatus().length()-1) + " ]";
         String size = "[ " + controller.getSize() + " KB ]";
         String time = "[ " + controller.getTime() + " s ]";
         panel3.setInformationPanel(status, size, time);
+
+        if(HttpClient.isImage()){
+            panel3.addImageToPreviewPanel();
+        }
 
         panel3.updateUI();
     }

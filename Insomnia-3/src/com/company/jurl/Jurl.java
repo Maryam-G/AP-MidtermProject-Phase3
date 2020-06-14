@@ -3,6 +3,10 @@ package com.company.jurl;
 import com.company.model.Request;
 import com.company.utils.FileUtils;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -66,6 +70,7 @@ public class Jurl {
      * create a new HttpClient for connection and sending request
      */
     public void checkRequest(){
+
         if(input.toLowerCase().startsWith(">jurl")){
             if(partsOfInput.length > 1){
                 if(partsOfInput[1].toLowerCase().equals("create")){

@@ -1,8 +1,13 @@
 package com.company.jurl;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Scanner;
 
 import com.company.jurl.Jurl;
+
+import javax.imageio.ImageIO;
 
 /**
  * A class for testing JurlApp and get input
