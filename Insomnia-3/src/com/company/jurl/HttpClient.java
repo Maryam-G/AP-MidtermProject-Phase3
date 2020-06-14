@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,10 @@ import java.util.Map;
  * @author Maryam Goli
  */
 public class HttpClient {
+
+    private String status;
+    private String size;
+    private String time;
 
     private HttpURLConnection connection;
     private Map<String, List<String>> responseHeaders;
@@ -28,13 +33,15 @@ public class HttpClient {
      * @param header headers of request
      * @param body body of request
      */
-    public HttpClient(String urlString, String method, HashMap<String, String> header,HashMap<String, String> body){
+    public HttpClient(String urlString, String method, HashMap<String, String> header,HashMap<String, String> body) {
         try {
             if(!urlString.startsWith("http://")){
                 urlString = "http://" + urlString;
             }
             URL url = new URL(urlString);
             connection = (HttpURLConnection) url.openConnection();
+
+            long start = System.currentTimeMillis();
 
             // request setup
 
@@ -55,9 +62,6 @@ public class HttpClient {
                 formData(body, boundary, bufferedOutputStream);
             }
 
-            // check the response code :
-            int status = connection.getResponseCode();
-
             // response body :
             BufferedReader reader;
             if(connection.getErrorStream() != null){
@@ -75,6 +79,22 @@ public class HttpClient {
 
             //response headers :
             responseHeaders = connection.getHeaderFields();
+
+            long finish = System.currentTimeMillis();
+            long totalTime = (finish - start) ;
+            time = String.valueOf(Math.round(totalTime * 100.0) / 100000.0);
+
+            for(Map.Entry<String, List<String>> entry : responseHeaders.entrySet()){
+                if(entry.getKey() == null){
+                    status = entry.getValue().toString();
+                    break;
+                }
+            }
+
+            // size of response body :
+            byte[] responseBytes= responseBody.getBytes();
+            Double sizeLong = Double.valueOf(responseBytes.length) / 1000;
+            size = Double.toString(sizeLong);
 
             connection.disconnect();
 
@@ -99,6 +119,19 @@ public class HttpClient {
      */
     public String getResponseBody() {
         return responseBody;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+
+    public String getSize() {
+        return size;
+    }
+
+    public String getTime() {
+        return time;
     }
 
     /**

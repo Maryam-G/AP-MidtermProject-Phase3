@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 /**
@@ -245,6 +246,7 @@ public class Panel2 extends JPanel {
             valueField = new JTextField("-[value]-");
             deleteButton = new JButton("\u2716");
             checkBox = new JCheckBox();
+            checkBox.setSelected(true);
 
             setPanel();
         }
@@ -298,6 +300,10 @@ public class Panel2 extends JPanel {
         public JTextField getValueField() {
             return valueField;
         }
+
+        public JCheckBox getCheckBox() {
+            return checkBox;
+        }
     }
 
     /**
@@ -315,6 +321,7 @@ public class Panel2 extends JPanel {
             valueField = new JTextField("-[value]-");
             deleteButton = new JButton("\u2716");
             checkBox = new JCheckBox();
+            checkBox.setSelected(true);
 
             setPanel();
         }
@@ -368,6 +375,10 @@ public class Panel2 extends JPanel {
         public JTextField getValueField() {
             return valueField;
         }
+
+        public JCheckBox getCheckBox() {
+            return checkBox;
+        }
     }
 
     /**
@@ -393,4 +404,49 @@ public class Panel2 extends JPanel {
     public JTextField getUrlAddress() {
         return urlAddress;
     }
+
+    // -> phase 3 :
+
+    public HashMap<String, String> getHeaders() {
+        HashMap<String, String> headers = new HashMap<>();
+        String key, value;
+        for(HeaderItemPanel item : headersList){
+            if(item.getCheckBox().isSelected()){
+                key = item.getKeyField().getText();
+                value = item.getValueField().getText();
+                if(!key.equals("-[key]-") || !value.equals("-[value]-")){
+                    if(key.equals("-[key]-")){
+                        key = "";
+                    }
+                    if(value.equals("-[value]-")){
+                        value = "";
+                    }
+                    headers.put(key, value);
+                }
+            }
+        }
+        return headers;
+    }
+
+    public HashMap<String, String> getBody() {
+        HashMap<String, String> body = new HashMap<>();
+        String key, value;
+        for(BodyItemPanel item : bodyList){
+            if(item.getCheckBox().isSelected()) {
+                key = item.getKeyField().getText();
+                value = item.getValueField().getText();
+                if(!key.equals("-[key]-") || !value.equals("-[value]-")){
+                    if(key.equals("-[key]-")){
+                        key = "";
+                    }
+                    if(value.equals("-[value]-")){
+                        value = "";
+                    }
+                    body.put(key, value);
+                }
+            }
+        }
+        return body;
+    }
+
 }

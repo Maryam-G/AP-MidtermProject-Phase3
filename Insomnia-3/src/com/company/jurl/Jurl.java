@@ -23,6 +23,12 @@ public class Jurl {
     private HashMap<String, String> requestHeaders;
     private HashMap<String, String> requestBody;
 
+    private Map<String, List<String>> responseHeaders;
+    private String responseBody;
+    private String status;
+    private String size;
+    private String time;
+
     private boolean hasUrl;
 
     private boolean hasSaveArgument, saved;
@@ -42,6 +48,8 @@ public class Jurl {
         method = "GET";
         requestHeaders = new HashMap<>();
         requestBody = new HashMap<>();
+
+        responseBody = "";
 
         hasUrl = false;
 
@@ -106,6 +114,12 @@ public class Jurl {
 
                                 if(!(hasSaveArgument && !saved)){
                                     HttpClient httpClient = new HttpClient(urlString, method, requestHeaders, requestBody);
+
+                                    responseBody = httpClient.getResponseBody();
+                                    responseHeaders = httpClient.getResponseHeaders();
+                                    status = httpClient.getStatus();
+                                    size = httpClient.getSize();
+                                    time = httpClient.getTime();
 
                                     printRequestInformation();
                                     System.out.println("\n" + httpClient.getResponseBody());
@@ -514,5 +528,27 @@ public class Jurl {
             }
         }
         return false;
+    }
+
+    // -> phase 3:
+
+    public Map<String, List<String>> getResponseHeaders() {
+        return responseHeaders;
+    }
+
+    public String getResponseBody() {
+        return responseBody;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public String getTime() {
+        return time;
     }
 }

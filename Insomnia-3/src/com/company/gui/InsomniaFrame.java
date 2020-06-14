@@ -1,11 +1,15 @@
 package com.company.gui;
 
+import com.company.controller.Controller;
+import com.company.jurl.Jurl;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.sql.SQLOutput;
 
 /**
  * A class for showing main frame of Insomnia (GUI)
@@ -13,6 +17,8 @@ import java.awt.event.ItemListener;
  * @author Maryam Goli
  */
 public class InsomniaFrame extends JFrame{
+
+    private Controller controller;
 
     private Menu menu;
     private boolean visibilityOfPanel1;
@@ -39,6 +45,8 @@ public class InsomniaFrame extends JFrame{
 
         addMenu();
         addPanels();
+
+        controller = new Controller();
     }
 
     /**
@@ -69,7 +77,10 @@ public class InsomniaFrame extends JFrame{
      */
     public void addPanels(){
         panel1 = new Panel1();
+
         panel2 = new Panel2();
+        panel2.getSendButton().addActionListener(new SendButtonHandler());
+
         panel3 = new Panel3();
 
         JSplitPane splitPaneForPanel2And3 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panel2, panel3);
@@ -155,6 +166,47 @@ public class InsomniaFrame extends JFrame{
                 InsomniaFrame.this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             } else if (e.getSource().equals(menu.getHideOnSystemTray())) {
                 InsomniaFrame.this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+            }
+        }
+    }
+
+    // -> phase 3:
+
+    public void setRequestGUI(){
+        controller.setUrlAddress(panel2.getUrlAddress().getText());
+        controller.setMethod(panel2.getComboBoxForMethod().getSelectedItem().toString());
+        controller.setRequestHeaders(panel2.getHeaders());
+        controller.setRequestBody(panel2.getBody());
+
+        controller.createJurl();
+        //todo : pak kardan e ezafiat
+//        System.out.println(controller.getUrlAddress());
+//        System.out.println(controller.getMethod());
+//        System.out.println(controller.getRequestHeaders());
+//        System.out.println(controller.getRequestBody());
+//        System.out.println(controller.getRequestHeadersString());
+//        System.out.println(controller.getRequestBodyString());
+    }
+
+    public void setResponseGUI(){
+        panel3.setHeadersPanel(controller.getResponseHeaders());
+        panel3.setRawBodyPanel(controller.getResponseBody());
+
+        String status = "[ " + controller.getStatus().substring(10, controller.getStatus().length()-1) + " ]";
+        String size = "[ " + controller.getSize() + " KB ]";
+        String time = "[ " + controller.getTime() + " s ]";
+        panel3.setInformationPanel(status, size, time);
+
+        panel3.updateUI();
+    }
+
+    private class SendButtonHandler implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if(e.getSource().equals(panel2.getSendButton())){
+                setRequestGUI();
+                setResponseGUI();
             }
         }
     }

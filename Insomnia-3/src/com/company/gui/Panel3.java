@@ -5,6 +5,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A class for showing panel 3 and response of selected request with response headers and body
@@ -100,30 +102,37 @@ public class Panel3 extends JPanel {
 
         headersList = new ArrayList<>();
 
-        JTextField keyField = new JTextField(" key ");
-        keyField.setEditable(false);
-        JTextField valueField = new JTextField(" value ");
-        valueField.setEditable(false);
-
-        keyField.setFont(new Font("Calibri", 45, 15));
-        valueField.setFont(new Font("Calibri", 45, 15));
-
-        JPanel keyValuePanel = new JPanel();
-        keyValuePanel.setLayout(new GridLayout());
-        keyValuePanel.add(keyField);
-        keyValuePanel.add(valueField);
-        keyValuePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
-
-        responseHeaderPanel.add(keyValuePanel);
-
         //button copy to clipboard :
 
         copyButton = new JButton("Copy to Clipboard");
         copyButton.setFont(new Font("Calibri", 45, 15));
-        copyButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         copyButton.addActionListener(new CopyButtonHandler());
 
-        responseHeaderPanel.add(copyButton);
+        JPanel copyButtonPanel = new JPanel();
+        copyButtonPanel.setLayout(new GridLayout(1, 1));
+        copyButtonPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+        copyButtonPanel.add(copyButton);
+
+        responseHeaderPanel.add(copyButtonPanel);
+
+        JTextField keyField = new JTextField(" key ");
+        keyField.setBackground(new Color(207, 214, 210));
+        keyField.setFont(new Font("Calibri", 45, 15));
+        keyField.setEditable(false);
+
+        JTextField valueField = new JTextField(" value ");
+        valueField.setBackground(new Color(207, 214, 210));
+        valueField.setFont(new Font("Calibri", 45, 15));
+        valueField.setEditable(false);
+
+        JPanel keyValuePanel = new JPanel();
+        keyValuePanel.setLayout(new GridLayout(1, 2));
+        keyValuePanel.add(keyField);
+        keyValuePanel.add(valueField);
+        keyValuePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
+
+        responseHeaderPanel.add(keyValuePanel);
+
     }
 
     /**
@@ -167,7 +176,7 @@ public class Panel3 extends JPanel {
         rawText.setText(" -[ Response Body]-");
         rawText.setEditable(false);
 
-        rawPanel.add(rawText, BorderLayout.CENTER);
+        rawPanel.add(new JScrollPane(rawText), BorderLayout.CENTER);
     }
 
     /**
@@ -222,12 +231,12 @@ public class Panel3 extends JPanel {
         private JTextField keyField;
         private JTextField valueField;
 
-        public HeaderItemPanel(String key, String value){
+        public HeaderItemPanel(String key, List<String> value){
             keyField = new JTextField(key);
             keyField.setEditable(false);
             keyField.setFont(new Font("Calibri", 45, 15));
 
-            valueField = new JTextField(value);
+            valueField = new JTextField(value.toString());
             valueField.setEditable(false);
             valueField.setFont(new Font("Calibri", 45, 15));
 
@@ -242,6 +251,7 @@ public class Panel3 extends JPanel {
 
     }
 
+
     /**
      * set theme for panel 3
      * @param newColor new color for theme
@@ -252,6 +262,33 @@ public class Panel3 extends JPanel {
         previewPanel.setBackground(newColor);
 
         responseHeaderPanel.setBackground(newColor);
+    }
+
+    // -> phase 3:
+
+    public void setHeadersPanel(Map<String, List<String>> responseHeaders){
+        String key ;
+        List<String> value ;
+        for(Map.Entry<String, List<String>> entry : responseHeaders.entrySet()){
+            if(entry.getKey() != null){
+                key = entry.getKey();
+                value = entry.getValue();
+                HeaderItemPanel headerItemPanel = new HeaderItemPanel(key, value);
+                responseBodyPanel.add(headerItemPanel);
+            }
+        }
+    }
+
+    public void setRawBodyPanel(String responseBody){
+        rawText.setText(responseBody);
+    }
+
+    public void setInformationPanel(String status, String size, String time){
+        statusField.setText(status);
+        //todo
+        sizeField.setText(size);
+        //todo
+        timeField.setText(time);
     }
 
 }
