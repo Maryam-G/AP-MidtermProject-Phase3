@@ -23,5 +23,6 @@ public class Main {
 
         InsomniaFrame frame = new InsomniaFrame();
         frame.setVisible(true);
+
     }
 }

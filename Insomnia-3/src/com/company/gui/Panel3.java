@@ -28,11 +28,13 @@ public class Panel3 extends JPanel {
 
     // body panel :
     private JPanel responseBodyPanel;
+    private JTabbedPane tabbedPane;
 
     private JPanel buttonGroupPanelForBody;
 
     private JRadioButton radioButtonRaw;
     private JPanel rawPanel;
+    private JScrollPane rawScrollPane;
     private JTextArea rawText;
 
     private JRadioButton radioButtonPreview;
@@ -51,7 +53,8 @@ public class Panel3 extends JPanel {
         this.setLayout(new BorderLayout());
         addInfoPanel();
 
-        JTabbedPane tabbedPane = new JTabbedPane();
+//        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane = new JTabbedPane();
         tabbedPane.setFont(new Font("Calibri", 45, 18));
 
         // body :
@@ -60,8 +63,8 @@ public class Panel3 extends JPanel {
         addResponseHeadersPanel();
 
         // add panels to tabs of tabbedPane
-        tabbedPane.add("Body", new JScrollPane(responseBodyPanel));
-        tabbedPane.add("Header", new JScrollPane(responseHeaderPanel));
+        tabbedPane.add("Body",responseBodyPanel);
+        tabbedPane.add("Header", responseHeaderPanel);
 
         this.add(tabbedPane, BorderLayout.CENTER);
     }
@@ -181,9 +184,16 @@ public class Panel3 extends JPanel {
         responseBodyPanel = new JPanel();
         responseBodyPanel.setLayout(new BorderLayout());
 
-        responseBodyPanel.add(new JScrollPane(buttonGroupPanelForBody), BorderLayout.NORTH);
+//        responseBodyPanel.add(new JScrollPane(buttonGroupPanelForBody), BorderLayout.NORTH);
+//        responseBodyPanel.add(new JScrollPane(previewPanel), BorderLayout.CENTER);
+//        responseBodyPanel.add(new JScrollPane(rawPanel), BorderLayout.CENTER);
+
+        responseBodyPanel.add(buttonGroupPanelForBody, BorderLayout.NORTH);
         responseBodyPanel.add(previewPanel, BorderLayout.CENTER);
         responseBodyPanel.add(rawPanel, BorderLayout.CENTER);
+
+        previewPanel.setVisible(false);
+        rawPanel.setVisible(true);
     }
 
     /**
@@ -204,7 +214,11 @@ public class Panel3 extends JPanel {
         textPanel.setLayout(new BorderLayout());
         textPanel.add(rawText, BorderLayout.CENTER);
 
-        rawPanel.add(new JScrollPane(textPanel), BorderLayout.CENTER);
+        rawScrollPane = new JScrollPane(textPanel);
+        rawPanel.add(rawScrollPane, BorderLayout.CENTER);
+
+
+//        rawPanel.add(new JScrollPane(textPanel), BorderLayout.CENTER);
     }
 
     /**
@@ -243,13 +257,13 @@ public class Panel3 extends JPanel {
 //                responseBodyPanel.add(buttonGroupPanelForBody, BorderLayout.NORTH);
 //                responseBodyPanel.add(rawPanel, BorderLayout.CENTER);
                 previewPanel.setVisible(false);
-                Panel3.this.updateUI();
+                updateUI();
             } else if (radioButtonPreview.isSelected()) {
                 previewPanel.setVisible(true);
                 //todo : pak
 //                responseBodyPanel.add(previewPanel, BorderLayout.CENTER);
                 rawPanel.setVisible(false);
-                Panel3.this.updateUI();
+                updateUI();
             }
         }
     }
@@ -278,7 +292,9 @@ public class Panel3 extends JPanel {
             keyValuePanel.add(valueField);
             keyValuePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
 
-            responseHeaderPanel.add(keyValuePanel);
+//            responseHeaderPanel.add(keyValuePanel);
+            this.setLayout(new BorderLayout());
+            this.add(keyValuePanel, BorderLayout.CENTER);
         }
 
     }
@@ -308,22 +324,29 @@ public class Panel3 extends JPanel {
         headersListPanel.revalidate();
         headersListPanel.repaint();
 
+        BoxLayout boxLayout = new BoxLayout(headersListPanel, BoxLayout.Y_AXIS);
+        headersListPanel.setLayout(boxLayout);
+
 //        headersList = new ArrayList<>();
 
         String key = "";
         List<String> value ;
+        HeaderItemPanel headerItemPanel;
         for(Map.Entry<String, List<String>> entry : responseHeaders.entrySet()){
             if(entry.getKey() != null){
                 key = entry.getKey();
                 value = entry.getValue();
-                HeaderItemPanel headerItemPanel = new HeaderItemPanel(key, value);
+                System.out.println(key + ".............." + value);
+                headerItemPanel = new HeaderItemPanel(key, value);
                 headersListPanel.add(headerItemPanel);
 //                headersList.add(headerItemPanel);
             }
         }
 
+        headersListPanel.setVisible(true);
         responseHeaderPanel.add(headersListPanel, BorderLayout.CENTER);
-        responseHeaderPanel.setVisible(true);
+
+//        responseHeaderPanel.setVisible(true);
         updateUI();
     }
 
@@ -333,6 +356,11 @@ public class Panel3 extends JPanel {
 
     public void setPreviewBodyPanel(boolean isImage){
         if(isImage){
+
+//            previewPanel.removeAll();
+//            previewPanel.revalidate();
+//            previewPanel.repaint();
+
             addImageToPreviewPanel();
         }else{
             //todo :nashooood
@@ -358,9 +386,32 @@ public class Panel3 extends JPanel {
     }
 
     public void addImageToPreviewPanel(){
+//        previewPanel = new JPanel();
+//        previewPanel.setLayout(new BorderLayout());
+
+//        JPanel panel = new JPanel();
+//
+//        panel.setLayout(new BorderLayout());
+//        imagePanel = new JPanel();
+//        imagePanel.setLayout(new BorderLayout());
+//        imagePanel.add(new LoadImageApp(), BorderLayout.CENTER);
+//        imagePanel.setVisible(true);
+////
+////        previewPanel.setLayout(new BorderLayout());
+//        previewPanel.add(imagePanel, BorderLayout.CENTER);
+
+
         previewPanel.add(new LoadImageApp(), BorderLayout.CENTER);
-        previewPanel.setVisible(true);
+
         responseBodyPanel.add(previewPanel, BorderLayout.CENTER);
+        previewPanel.setVisible(false);
+
+
+        radioButtonRaw.setSelected(true);
+        rawPanel.setVisible(true);
+
+//        tabbedPane.getComponentAt(0).repaint();
+
         updateUI();
     }
 
@@ -369,6 +420,7 @@ public class Panel3 extends JPanel {
         BufferedImage img;
 
         public void paint(Graphics g) {
+//            g.drawImage(img, 0, 0, null);
             g.drawImage(img, 0, 0, null);
         }
 
@@ -387,5 +439,25 @@ public class Panel3 extends JPanel {
 
     public JPanel getResponseHeaderPanel() {
         return responseHeaderPanel;
+    }
+
+    public JPanel getHeadersListPanel() {
+        return headersListPanel;
+    }
+
+    public JTabbedPane getTabbedPane() {
+        return tabbedPane;
+    }
+
+    public JPanel getPreviewPanel() {
+        return previewPanel;
+    }
+
+    public JRadioButton getRadioButtonRaw() {
+        return radioButtonRaw;
+    }
+
+    public JRadioButton getRadioButtonPreview() {
+        return radioButtonPreview;
     }
 }

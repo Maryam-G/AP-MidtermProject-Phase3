@@ -209,9 +209,25 @@ public class InsomniaFrame extends JFrame{
         panel3.setInformationPanel(status, size, time);
 
         panel3.setPreviewBodyPanel(HttpClient.isImage());
-        if(HttpClient.isImage()){
-            panel3.addImageToPreviewPanel();
-        }
+//        if(HttpClient.isImage()){
+//            panel3.addImageToPreviewPanel();
+//        }
+
+        // todo : ezafe
+        panel3.getTabbedPane().getComponentAt(1).repaint();
+        panel3.getTabbedPane().getComponentAt(0).repaint();
+        panel3.getRadioButtonRaw().setSelected(true);
+        panel3.getRadioButtonPreview().setSelected(false);
+
+        panel3.getPreviewPanel().setVisible(false);
+
+//        panel3.getTabbedPane().setVisible(false);
+//        JTabbedPane tabbedPane = new JTabbedPane();
+//        tabbedPane.add("Body", panel3.getResponseBodyPanel());
+//        tabbedPane.add("Headers", panel3.getResponseHeaderPanel());
+//        tabbedPane.add("kjh", panel3.getHeadersListPanel());
+
+//        panel3.add(tabbedPane, BorderLayout.CENTER);
 
         panel3.updateUI();
     }
@@ -366,4 +382,7 @@ public class InsomniaFrame extends JFrame{
     }
 
 
+    public Panel3 getPanel3() {
+        return panel3;
+    }
 }
