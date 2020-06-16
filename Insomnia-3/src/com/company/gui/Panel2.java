@@ -9,6 +9,7 @@ import java.awt.event.FocusListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * A class for showing panel 2 and selected request with its headers and body
@@ -84,9 +85,13 @@ public class Panel2 extends JPanel {
         sendButton.setFont(new Font("Calibri", 45, 15));
         sendButton.setHorizontalAlignment(JButton.CENTER);
 
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new GridLayout(1, 2, 1, 1));
+        buttonPanel.add(sendButton);
+
         urlPanel.add(comboBoxForMethod, BorderLayout.WEST);
         urlPanel.add(urlAddress, BorderLayout.CENTER);
-        urlPanel.add(sendButton, BorderLayout.EAST);
+        urlPanel.add(buttonPanel, BorderLayout.EAST);
         urlPanel.setVisible(true);
 
         this.add(urlPanel, BorderLayout.PAGE_START);
@@ -447,6 +452,44 @@ public class Panel2 extends JPanel {
             }
         }
         return body;
+    }
+
+    public void showRequestHeaders(HashMap<String, String> headers){
+
+        BoxLayout boxLayout = new BoxLayout(requestHeaderPanel, BoxLayout.Y_AXIS);
+        requestHeaderPanel.setLayout(boxLayout);
+
+        headersList = new ArrayList<>();
+        for(Map.Entry<String, String> entry : headers.entrySet()){
+            HeaderItemPanel headerItem = new HeaderItemPanel();
+            headerItem.getKeyField().setText(entry.getKey());
+            headerItem.getValueField().setText(entry.getValue());
+
+            headerItem.getKeyField().addFocusListener(new FocusHandler());
+            headerItem.getValueField().addFocusListener(new FocusHandler());
+
+            headersList.add(headerItem);
+            requestHeaderPanel.add(headerItem);
+        }
+    }
+
+    public void showRequestBodyFormData(HashMap<String, String> body){
+
+        BoxLayout boxLayout = new BoxLayout(formDataPanel, BoxLayout.Y_AXIS);
+        formDataPanel.setLayout(boxLayout);
+
+        bodyList = new ArrayList<>();
+        for(Map.Entry<String, String> entry : body.entrySet()){
+            BodyItemPanel bodyItem = new BodyItemPanel();
+            bodyItem.getKeyField().setText(entry.getKey());
+            bodyItem.getValueField().setText(entry.getValue());
+
+            bodyItem.getKeyField().addFocusListener(new FocusHandler());
+            bodyItem.getValueField().addFocusListener(new FocusHandler());
+
+            bodyList.add(bodyItem);
+            formDataPanel.add(bodyItem);
+        }
     }
 
 }

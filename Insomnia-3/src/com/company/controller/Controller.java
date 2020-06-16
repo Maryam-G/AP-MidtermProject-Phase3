@@ -2,6 +2,7 @@ package com.company.controller;
 
 import com.company.jurl.HttpClient;
 import com.company.jurl.Jurl;
+import com.company.model.Request;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -125,29 +126,6 @@ public class Controller {
     }
 
     //todo : pak kardan e ezafiat
-    public String getMethod() {
-        return method;
-    }
-
-    public String getUrlAddress() {
-        return urlAddress;
-    }
-
-    public HashMap<String, String> getRequestBody() {
-        return requestBody;
-    }
-
-    public HashMap<String, String> getRequestHeaders() {
-        return requestHeaders;
-    }
-
-    public String getRequestBodyString() {
-        return requestBodyString;
-    }
-
-    public String getRequestHeadersString() {
-        return requestHeadersString;
-    }
 
     public Map<String, List<String>> getResponseHeaders() {
         return responseHeaders;
@@ -169,4 +147,19 @@ public class Controller {
         return time;
     }
 
+    public String getUrlAddress() {
+        return urlAddress;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public HashMap<String, String> getRequestHeaders() {
+        return requestHeaders;
+    }
+
+    public HashMap<String, String> getRequestBody() {
+        return requestBody;
+    }
 }

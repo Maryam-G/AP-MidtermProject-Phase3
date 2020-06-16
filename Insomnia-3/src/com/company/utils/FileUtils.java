@@ -2,6 +2,12 @@ package com.company.utils;
 
 import com.company.model.Request;
 
+import javax.swing.*;
+import javax.swing.filechooser.FileView;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
+import java.awt.*;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,8 +24,8 @@ public class FileUtils {
     static {
         boolean directoryCreated0 = new File("./Requests/").mkdirs();
         boolean directoryCreated1 = new File("./Requests/AllCollections/").mkdirs();
-        boolean directoryCreated2 = new File("./Responses/").mkdirs();
-        boolean directoryCreated3 = new File("./Responses/Images").mkdirs();
+        boolean directoryCreated2 = new File("./Requests/History/").mkdirs();
+        boolean directoryCreated3 = new File("./Responses/").mkdirs();
     }
 
     /**
@@ -43,11 +49,15 @@ public class FileUtils {
     /**
      * write object with type "Request" in a file in selected directory
      * @param newRequest object with type "Request"
-     * @param directoryName name of selected directory
+     * @param collectionName name of selected directory
      */
-    public static void writeRequestInFile(Request newRequest, String directoryName){
-
-        File file = new File("./Requests/AllCollections/" + directoryName + "/" + "Request-" + (listOfAllRequestsInDirectory(directoryName).size()+1) + ".txt");
+    public static void writeRequestInFile(boolean saveInHistory, Request newRequest, String collectionName, String requestName){
+        File file;
+        if(saveInHistory){
+            file = new File("./Requests/History/Request-" + (listOfAllRequestsInDirectory("History").size() + 1) + ".txt");
+        }else{
+            file = new File("./Requests/AllCollections/" + collectionName + "/" + requestName + ".txt");
+        }
         try (ObjectOutputStream objectOutput = new ObjectOutputStream(new FileOutputStream(file))){
             objectOutput.writeObject(newRequest);
         } catch (FileNotFoundException e) {
@@ -56,6 +66,7 @@ public class FileUtils {
             e.printStackTrace();
         }
     }
+
 
     /**
      * read object "Request" from file
@@ -83,7 +94,7 @@ public class FileUtils {
      */
     public static ArrayList<Request> listOfAllRequestsInDirectory(String directoryName){
         ArrayList<Request> requests = new ArrayList<>();
-        File directory = new File("./Requests/AllCollections/" + directoryName );
+        File directory = new File("./Requests/" + directoryName + "/");
         File[] fList = directory.listFiles();
         Request currentRequest;
         for(File currentFile : fList){
@@ -141,6 +152,43 @@ public class FileUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    // -> phase 3:
+
+    public static DefaultTreeModel createListOfAllCollections(DefaultMutableTreeNode root){
+        File fileRoot = new File("./Requests/AllCollections/");
+
+        DefaultTreeModel model = new DefaultTreeModel(root);
+
+        File[] subItems = fileRoot.listFiles();
+        for (File file : subItems) {
+            DefaultMutableTreeNode newDirectory = new DefaultMutableTreeNode(file.getName());
+            root.add(newDirectory);
+
+            File[] filesInNewDirectory = (new File("./Requests/AllCollections/" + file.getName())).listFiles();
+            for(File currentFile : filesInNewDirectory){
+                DefaultMutableTreeNode newFile = new DefaultMutableTreeNode(currentFile.getName());
+                newDirectory.add(newFile);
+            }
+
+        }
+
+        return model;
+    }
+
+    public static DefaultTreeModel createListOfAllRequests(DefaultMutableTreeNode root){
+        File fileRoot = new File("./Requests/History/");
+
+        DefaultTreeModel model = new DefaultTreeModel(root);
+
+        File[] subItems = fileRoot.listFiles();
+        for (File file : subItems) {
+            DefaultMutableTreeNode newFile = new DefaultMutableTreeNode(file.getName());
+            root.add(newFile);
+        }
+
+        return model;
     }
 
 

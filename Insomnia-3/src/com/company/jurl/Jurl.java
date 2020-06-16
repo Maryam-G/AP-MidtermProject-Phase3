@@ -354,7 +354,7 @@ public class Jurl {
                 "   \u25B8 -M or --methods [...]     => set method of request                                                  ([...] -> GET[by-default] - PUT - POST - DELETE)" + "\n" +
                 "   \u25B8 -H or --headers [...]     => set headers of request with \":\" and \";\"                                ([...] -> for example : \"key1:value1;key2:value2\" )" + "\n" +
                 "   \u25B8 -d or --data [...]        => set body [Form-data] of request with \"=\" and \"&\"                       ([...] -> for example : \"key1=value1&key2=value2\" )" + "\n" +
-                "   \u25B8 -S or --save [...]        => save request (URL-method-headers-body) in selected collection          ([...] -> name of collection )" + "\n" +
+                "   \u25B8 -S or --save [...] [...]  => save request (URL-method-headers-body) in selected collection          ([...]-1 -> name of collection , [...]-2 -> name of request )" + "\n" +
                 "   \u25B8 -i                        => showing headers of response" + "\n" +
                 "   \u25B8 -O or --output ~[...]     => save response body in file                                             ([...] -> name of file [\"~\" means optional] )" + "\n"
         );
@@ -373,12 +373,15 @@ public class Jurl {
             index = indexOfString("-S") + 1;
 
         // save request in one collection (name of this collection is in partsOfInput[index])
-        if(index >= partsOfInput.length){
+        if(index >= partsOfInput.length || partsOfInput[index].startsWith("-")) {
             System.err.println("Saving request in which collection?!");
+        }else if((index+1) >= partsOfInput.length || partsOfInput[index+1].startsWith("-")){
+            System.err.println("Name of request?!");
         }else{
             String collectionName = partsOfInput[index];
+            String requestName = partsOfInput[index+1];
             if (FileUtils.findDirectoryInRequestDirectories(collectionName)) {
-                FileUtils.writeRequestInFile(newRequest, collectionName);
+                FileUtils.writeRequestInFile(false, newRequest, collectionName, requestName);
                 saved = true;
             }else{
                 System.err.println("Invalid name for directory!");

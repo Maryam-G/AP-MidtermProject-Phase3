@@ -1,11 +1,21 @@
 package com.company.gui;
 
+import com.company.jurl.Jurl;
+import com.company.model.Request;
+import com.company.utils.FileUtils;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * A class for showing panel 1 with list of requests and collections
@@ -14,15 +24,24 @@ import java.awt.event.ActionListener;
  */
 public class Panel1 extends JPanel {
 
+//    private Request selectedRequest;
+
     private JPanel panelForCollections;
-
     private JButton newCollection;
-    private JButton newRequest;
-    private String nameOfNewRequest;
-    private String nameOfNewCollection;
-
-    private DefaultMutableTreeNode allCollections;
     private JTree treeOfCollections;
+    private DefaultMutableTreeNode rootCollections;
+
+    private String nameOfNewCollection;
+    private String nameOfNewRequest;
+    private String nameOfSelectedCollection;
+
+    private JPanel panelForHistory;
+    private JButton newRequest;
+    private JTree treeOfRequests;
+    private DefaultMutableTreeNode rootRequests;
+
+    private JPanel filesPanel;
+    private JButton saveButton;
 
     /**
      * constructor method
@@ -31,8 +50,32 @@ public class Panel1 extends JPanel {
         this.setMinimumSize(new Dimension(300, 600));
         this.setLayout(new BorderLayout());
 
+        filesPanel = new JPanel();
+        filesPanel.setLayout(new GridLayout(2, 1, 1, 1));
+
         addInsomniaLabel();
+        addPanelForHistory();
         addPanelForCollections();
+
+        saveButton = new JButton("Save");
+        saveButton.setFont(new Font("Calibri", 45, 15));
+        saveButton.setHorizontalAlignment(JButton.CENTER);
+        saveButton.setBackground(new Color(255, 255, 255));
+        saveButton.isOpaque();
+        saveButton.addActionListener(new ButtonHandler());
+
+
+        JPanel saveButtonPanel = new JPanel();
+        saveButtonPanel.setLayout(new BorderLayout());
+        saveButtonPanel.setBorder(new EmptyBorder(3, 3, 5, 0));
+        saveButtonPanel.add(saveButton, BorderLayout.CENTER);
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+        panel.add(saveButtonPanel, BorderLayout.PAGE_START);
+        panel.add(filesPanel, BorderLayout.CENTER);
+
+        this.add(panel, BorderLayout.CENTER);
     }
 
     /**
@@ -55,107 +98,101 @@ public class Panel1 extends JPanel {
         this.add(panelForInsomniaLabel, BorderLayout.PAGE_START);
     }
 
-    /**
-     * add buttons for create new collection and new request
-     */
-    public void addButtons() {
-        newCollection = new JButton("New Collection");
-        newCollection.setFont(new Font("Calibri", 45, 15));
-        newCollection.addActionListener(new ButtonHandler());
-
-        newRequest = new JButton("New Request");
-        newRequest.setFont(new Font("Calibri", 45, 15));
-        newRequest.addActionListener(new ButtonHandler());
-
-        JPanel panelForButtons = new JPanel();
-        panelForButtons.setBorder(new EmptyBorder(1, 0, 2, 0));
-        panelForButtons.setLayout(new GridLayout(1, 2, 2, 2));
-
-        panelForButtons.add(newCollection);
-        panelForButtons.add(newRequest);
-
-        panelForCollections.add(panelForButtons, BorderLayout.NORTH);
-    }
-
-    /**
-     * add list of all collections
-     */
-    public void addListOfCollections() {
-        allCollections = new DefaultMutableTreeNode("All Collections", true);
-        DefaultMutableTreeNode firstRequest = new DefaultMutableTreeNode("FirstRequest");
-        allCollections.add(firstRequest);
-
-        treeOfCollections = new JTree(allCollections);
-        treeOfCollections.scrollPathToVisible(new TreePath(allCollections.getPath()));
-
-        final DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) (treeOfCollections.getCellRenderer());
-        renderer.setFont(new Font("Calibri", 45, 19));
-        treeOfCollections.setRowHeight(30);
-
-        allCollections.breadthFirstEnumeration();
-
-        panelForCollections.add(new JScrollPane(treeOfCollections), BorderLayout.CENTER);
-    }
-
-    /**
-     * add panel for list of all collections to panel 1
-     */
     public void addPanelForCollections() {
         panelForCollections = new JPanel();
         panelForCollections.setLayout(new BorderLayout(1, 1));
         panelForCollections.setBorder(new EmptyBorder(3, 3, 3, 0));
 
-        addButtons();
+        JLabel collectionsLabel = new JLabel();
+        collectionsLabel.setText("            -- All Collections [For-Saved-Requests] --");
+        collectionsLabel.setFont(new Font("Calibri", 45, 12));
+        collectionsLabel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
+
+
+        newCollection = new JButton("New Collection");
+        newCollection.setFont(new Font("Calibri", 45, 15));
+        //todo : button handler
+        newCollection.addActionListener(new ButtonHandler());
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+        panel.add(newCollection, BorderLayout.NORTH);
+        panel.add(collectionsLabel, BorderLayout.CENTER);
+
+        panelForCollections.add(panel, BorderLayout.NORTH);
+
         addListOfCollections();
 
-        this.add(panelForCollections, BorderLayout.CENTER);
+        filesPanel.add(panelForCollections);
+
     }
 
-    /**
-     * An inner class for handling events that related to buttons
-     */
+    public void addListOfCollections(){
+
+        treeOfCollections = new JTree();
+        rootCollections = new DefaultMutableTreeNode("AllCollections");
+
+        treeOfCollections.setModel(FileUtils.createListOfAllCollections(rootCollections));
+        panelForCollections.add(new JScrollPane(treeOfCollections), BorderLayout.CENTER);
+
+    }
+
+    public void addPanelForHistory() {
+        panelForHistory = new JPanel();
+        panelForHistory.setLayout(new BorderLayout(1, 1));
+        panelForHistory.setBorder(new EmptyBorder(3, 3, 3, 0));
+
+        JLabel requestsLabel = new JLabel();
+        requestsLabel.setText("                        -- All Requests [History] --");
+        requestsLabel.setFont(new Font("Calibri", 45, 12));
+        requestsLabel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
+
+        newRequest = new JButton("New Request");
+        newRequest.setFont(new Font("Calibri", 45, 15));
+        newRequest.addActionListener(new ButtonHandler());
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+        panel.add(newRequest, BorderLayout.NORTH);
+        panel.add(requestsLabel, BorderLayout.CENTER);
+
+        panelForHistory.add(panel, BorderLayout.NORTH);
+
+        addListOfRequests();
+
+        filesPanel.add(panelForHistory);
+    }
+
+    public void addListOfRequests(){
+        treeOfRequests = new JTree();
+        rootRequests = new DefaultMutableTreeNode("History");
+
+        treeOfRequests.setModel(FileUtils.createListOfAllRequests(rootRequests));
+        panelForHistory.add(new JScrollPane(treeOfRequests), BorderLayout.CENTER);
+    }
+
     private class ButtonHandler implements ActionListener {
+
         @Override
         public void actionPerformed(ActionEvent e) {
+            if(e.getSource().equals(newRequest)){
+                //todo : kamel kardan
+                FileUtils.writeRequestInFile(true, new Request("Enter URL...", "GET", new HashMap<>(), new HashMap<>()), null, null);
 
-            DefaultMutableTreeNode parentNode;
-            TreePath parentPath = treeOfCollections.getSelectionPath();
+                DefaultMutableTreeNode parentNode = rootRequests;
+                TreePath parentPath = treeOfRequests.getSelectionPath();
+                DefaultMutableTreeNode newFile = new DefaultMutableTreeNode("Request-" + (FileUtils.listOfAllRequestsInDirectory("History").size()) + ".txt");
 
-            //button : New Collection
-            if (e.getSource().equals(newCollection)) {
-                if (parentPath == null) {
-                    //There is no selection. Default to the root node (all Collections).
-                    parentNode = allCollections;
-                    buildFrameForNameOfFolder(parentNode);
-                } else {
-                    parentNode = (DefaultMutableTreeNode) (parentPath.getLastPathComponent());
-                    if(parentNode.equals(allCollections)){
-                        buildFrameForNameOfFolder(parentNode);
-                    } else {
-                        buildFrameForNameOfFolder(allCollections);
-                    }
-                }
-            }
-            //button : New Request
-            else if (e.getSource().equals(newRequest)) {
-                if (parentPath == null) {
-                    //There is no selection.
-                    //TODO
-                    JOptionPane.showMessageDialog(null, "You can not create new Request! \n Please select or create one collection...", "Error", JOptionPane.ERROR_MESSAGE);
-                } else {
-                    parentNode = (DefaultMutableTreeNode) (parentPath.getLastPathComponent());
-                    if (parentNode.equals(allCollections)){
-                        JOptionPane.showMessageDialog(null, "You can not create new Request! \n Please select or create one collection...", "Error", JOptionPane.ERROR_MESSAGE);
-                    }else if (parentNode.getChildCount() == 0) {
-                        JOptionPane.showMessageDialog(null, "You can not create new Request! \n Please select or create one collection...", "Error", JOptionPane.ERROR_MESSAGE);
-                    } else {
-                        buildFrameForNameOfRequest(parentNode);
-                    }
-                }
+                DefaultTreeModel model = (DefaultTreeModel) treeOfRequests.getModel();
+                model.insertNodeInto(newFile, parentNode, parentNode.getChildCount());
+                treeOfRequests.scrollPathToVisible(new TreePath(newFile.getPath()));
+
+            }else if(e.getSource().equals(newCollection)){
+                buildFrameForNameOfFolder();
             }
         }
 
-        public void buildFrameForNameOfFolder(DefaultMutableTreeNode parentNode) {
+        public void buildFrameForNameOfFolder() {
             JFrame setNameFrame = new JFrame("New Collection");
             setNameFrame.setSize(new Dimension(500, 200));
             setNameFrame.setLocation(900, 400);
@@ -186,64 +223,16 @@ public class Panel1 extends JPanel {
             createButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    nameOfNewCollection = nameField.getText();
-                    DefaultMutableTreeNode newFolder = new DefaultMutableTreeNode(nameOfNewCollection, true);
-                    DefaultMutableTreeNode firstRequest = new DefaultMutableTreeNode("FirstRequest");
-                    newFolder.add(firstRequest);
+                    nameOfNewCollection = nameField.getText().replaceAll(" ", "");
+                    Jurl jurlApp = new Jurl(">jurl create " + nameOfNewCollection);
 
+                    DefaultMutableTreeNode parentNode = rootCollections;
+                    TreePath parentPath = treeOfCollections.getSelectionPath();
+
+                    DefaultMutableTreeNode newFolder = new DefaultMutableTreeNode(nameOfNewCollection, true);
                     DefaultTreeModel model = (DefaultTreeModel) treeOfCollections.getModel();
                     model.insertNodeInto(newFolder, parentNode, parentNode.getChildCount());
                     treeOfCollections.scrollPathToVisible(new TreePath(newFolder.getPath()));
-
-                    setNameFrame.setVisible(false);
-                }
-            });
-        }
-
-
-        public void buildFrameForNameOfRequest(DefaultMutableTreeNode parentNode) {
-            JFrame setNameFrame = new JFrame("New Request");
-            setNameFrame.setSize(new Dimension(500, 230));
-            setNameFrame.setLocation(900, 400);
-            setNameFrame.setLayout(new BorderLayout());
-            setNameFrame.setResizable(false);
-
-            JPanel newRequestPanel = new JPanel();
-            newRequestPanel.setLayout(new BorderLayout());
-            newRequestPanel.setBorder(new EmptyBorder(20, 10, 10, 10));
-
-            // create panel and add to frame
-            JPanel namePanel = new JPanel();
-            namePanel.setLayout(new BorderLayout());
-            namePanel.setBorder(new EmptyBorder(30, 10, 30, 10));
-
-            JLabel nameLabel = new JLabel("Name");
-            nameLabel.setFont(new Font("Calibri", 14, 19));
-            nameLabel.setBorder(new EmptyBorder(0, 5, 10, 10));
-
-            JTextField nameField = new JTextField();
-            nameField.setText("MyRequest");
-
-            JButton createButton = new JButton("Create");
-
-            namePanel.add(nameLabel, BorderLayout.NORTH);
-            namePanel.add(nameField, BorderLayout.CENTER);
-
-            newRequestPanel.add(namePanel, BorderLayout.CENTER);
-            newRequestPanel.add(createButton, BorderLayout.SOUTH);
-
-            setNameFrame.add(newRequestPanel, BorderLayout.CENTER);
-            setNameFrame.setVisible(true);
-
-            createButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    nameOfNewRequest = nameField.getText();
-                    DefaultMutableTreeNode newRequest = new DefaultMutableTreeNode(nameOfNewRequest);
-
-                    DefaultTreeModel model = (DefaultTreeModel) treeOfCollections.getModel();
-                    model.insertNodeInto(newRequest, parentNode, parentNode.getChildCount());
-                    treeOfCollections.scrollPathToVisible(new TreePath(newRequest.getPath()));
 
                     setNameFrame.setVisible(false);
                 }
@@ -257,6 +246,7 @@ public class Panel1 extends JPanel {
      */
     public void setThemeForPanel1(Color newColor){
         treeOfCollections.setBackground(newColor);
+        treeOfRequests.setBackground(newColor);
         final DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) (treeOfCollections.getCellRenderer());
         if (newColor.equals(Color.DARK_GRAY)) {
             renderer.setTextNonSelectionColor(Color.WHITE);
@@ -265,5 +255,25 @@ public class Panel1 extends JPanel {
             renderer.setTextNonSelectionColor(Color.BLACK);
             renderer.setTextSelectionColor(new Color(197, 138, 255));
         }
+        final DefaultTreeCellRenderer renderer2 = (DefaultTreeCellRenderer) (treeOfRequests.getCellRenderer());
+        if (newColor.equals(Color.DARK_GRAY)) {
+            renderer2.setTextNonSelectionColor(Color.WHITE);
+            renderer2.setTextSelectionColor(new Color(197, 138, 255));
+        } else {
+            renderer2.setTextNonSelectionColor(Color.BLACK);
+            renderer2.setTextSelectionColor(new Color(197, 138, 255));
+        }
+    }
+
+    public JTree getTreeOfCollections() {
+        return treeOfCollections;
+    }
+
+    public JTree getTreeOfRequests() {
+        return treeOfRequests;
+    }
+
+    public JButton getSaveButton() {
+        return saveButton;
     }
 }
