@@ -101,7 +101,7 @@ public class Controller {
         requestBodyString += "\"";
     }
 
-    public void createJurl(){
+    public void createJurl(boolean hasSaveArgument, String collectionName, String requestName){
         // set request :
         jurlInput = ">jurl ";
         jurlInput += "--url " + urlAddress;
@@ -111,6 +111,9 @@ public class Controller {
         }
         if(requestBody.size() > 0){
             jurlInput += " --data " + requestBodyString;
+        }
+        if(hasSaveArgument){
+            jurlInput += " --save " + collectionName + " " + requestName;
         }
 
         // establish connection :

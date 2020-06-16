@@ -24,8 +24,7 @@ public class FileUtils {
     static {
         boolean directoryCreated0 = new File("./Requests/").mkdirs();
         boolean directoryCreated1 = new File("./Requests/AllCollections/").mkdirs();
-        boolean directoryCreated2 = new File("./Requests/History/").mkdirs();
-        boolean directoryCreated3 = new File("./Responses/").mkdirs();
+        boolean directoryCreated2 = new File("./Responses/").mkdirs();
     }
 
     /**
@@ -51,13 +50,8 @@ public class FileUtils {
      * @param newRequest object with type "Request"
      * @param collectionName name of selected directory
      */
-    public static void writeRequestInFile(boolean saveInHistory, Request newRequest, String collectionName, String requestName){
-        File file;
-        if(saveInHistory){
-            file = new File("./Requests/History/Request-" + (listOfAllRequestsInDirectory("History").size() + 1) + ".txt");
-        }else{
-            file = new File("./Requests/AllCollections/" + collectionName + "/" + requestName + ".txt");
-        }
+    public static void writeRequestInFile(Request newRequest, String collectionName, String requestName){
+        File file = new File("./Requests/AllCollections/" + collectionName + "/" + requestName + ".txt");;
         try (ObjectOutputStream objectOutput = new ObjectOutputStream(new FileOutputStream(file))){
             objectOutput.writeObject(newRequest);
         } catch (FileNotFoundException e) {
@@ -172,20 +166,6 @@ public class FileUtils {
                 newDirectory.add(newFile);
             }
 
-        }
-
-        return model;
-    }
-
-    public static DefaultTreeModel createListOfAllRequests(DefaultMutableTreeNode root){
-        File fileRoot = new File("./Requests/History/");
-
-        DefaultTreeModel model = new DefaultTreeModel(root);
-
-        File[] subItems = fileRoot.listFiles();
-        for (File file : subItems) {
-            DefaultMutableTreeNode newFile = new DefaultMutableTreeNode(file.getName());
-            root.add(newFile);
         }
 
         return model;

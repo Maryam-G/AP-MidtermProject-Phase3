@@ -381,7 +381,7 @@ public class Jurl {
             String collectionName = partsOfInput[index];
             String requestName = partsOfInput[index+1];
             if (FileUtils.findDirectoryInRequestDirectories(collectionName)) {
-                FileUtils.writeRequestInFile(false, newRequest, collectionName, requestName);
+                FileUtils.writeRequestInFile(newRequest, collectionName, requestName);
                 saved = true;
             }else{
                 System.err.println("Invalid name for directory!");

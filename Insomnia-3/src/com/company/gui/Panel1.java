@@ -24,21 +24,12 @@ import java.util.Iterator;
  */
 public class Panel1 extends JPanel {
 
-//    private Request selectedRequest;
-
     private JPanel panelForCollections;
     private JButton newCollection;
     private JTree treeOfCollections;
     private DefaultMutableTreeNode rootCollections;
 
     private String nameOfNewCollection;
-    private String nameOfNewRequest;
-    private String nameOfSelectedCollection;
-
-    private JPanel panelForHistory;
-    private JButton newRequest;
-    private JTree treeOfRequests;
-    private DefaultMutableTreeNode rootRequests;
 
     private JPanel filesPanel;
     private JButton saveButton;
@@ -51,10 +42,9 @@ public class Panel1 extends JPanel {
         this.setLayout(new BorderLayout());
 
         filesPanel = new JPanel();
-        filesPanel.setLayout(new GridLayout(2, 1, 1, 1));
+        filesPanel.setLayout(new BorderLayout());
 
         addInsomniaLabel();
-        addPanelForHistory();
         addPanelForCollections();
 
         saveButton = new JButton("Save");
@@ -123,7 +113,7 @@ public class Panel1 extends JPanel {
 
         addListOfCollections();
 
-        filesPanel.add(panelForCollections);
+        filesPanel.add(panelForCollections, BorderLayout.CENTER);
 
     }
 
@@ -137,57 +127,11 @@ public class Panel1 extends JPanel {
 
     }
 
-    public void addPanelForHistory() {
-        panelForHistory = new JPanel();
-        panelForHistory.setLayout(new BorderLayout(1, 1));
-        panelForHistory.setBorder(new EmptyBorder(3, 3, 3, 0));
-
-        JLabel requestsLabel = new JLabel();
-        requestsLabel.setText("                        -- All Requests [History] --");
-        requestsLabel.setFont(new Font("Calibri", 45, 12));
-        requestsLabel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
-
-        newRequest = new JButton("New Request");
-        newRequest.setFont(new Font("Calibri", 45, 15));
-        newRequest.addActionListener(new ButtonHandler());
-
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
-        panel.add(newRequest, BorderLayout.NORTH);
-        panel.add(requestsLabel, BorderLayout.CENTER);
-
-        panelForHistory.add(panel, BorderLayout.NORTH);
-
-        addListOfRequests();
-
-        filesPanel.add(panelForHistory);
-    }
-
-    public void addListOfRequests(){
-        treeOfRequests = new JTree();
-        rootRequests = new DefaultMutableTreeNode("History");
-
-        treeOfRequests.setModel(FileUtils.createListOfAllRequests(rootRequests));
-        panelForHistory.add(new JScrollPane(treeOfRequests), BorderLayout.CENTER);
-    }
-
     private class ButtonHandler implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(e.getSource().equals(newRequest)){
-                //todo : kamel kardan
-                FileUtils.writeRequestInFile(true, new Request("Enter URL...", "GET", new HashMap<>(), new HashMap<>()), null, null);
-
-                DefaultMutableTreeNode parentNode = rootRequests;
-                TreePath parentPath = treeOfRequests.getSelectionPath();
-                DefaultMutableTreeNode newFile = new DefaultMutableTreeNode("Request-" + (FileUtils.listOfAllRequestsInDirectory("History").size()) + ".txt");
-
-                DefaultTreeModel model = (DefaultTreeModel) treeOfRequests.getModel();
-                model.insertNodeInto(newFile, parentNode, parentNode.getChildCount());
-                treeOfRequests.scrollPathToVisible(new TreePath(newFile.getPath()));
-
-            }else if(e.getSource().equals(newCollection)){
+            if(e.getSource().equals(newCollection)){
                 buildFrameForNameOfFolder();
             }
         }
@@ -246,7 +190,6 @@ public class Panel1 extends JPanel {
      */
     public void setThemeForPanel1(Color newColor){
         treeOfCollections.setBackground(newColor);
-        treeOfRequests.setBackground(newColor);
         final DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) (treeOfCollections.getCellRenderer());
         if (newColor.equals(Color.DARK_GRAY)) {
             renderer.setTextNonSelectionColor(Color.WHITE);
@@ -255,25 +198,17 @@ public class Panel1 extends JPanel {
             renderer.setTextNonSelectionColor(Color.BLACK);
             renderer.setTextSelectionColor(new Color(197, 138, 255));
         }
-        final DefaultTreeCellRenderer renderer2 = (DefaultTreeCellRenderer) (treeOfRequests.getCellRenderer());
-        if (newColor.equals(Color.DARK_GRAY)) {
-            renderer2.setTextNonSelectionColor(Color.WHITE);
-            renderer2.setTextSelectionColor(new Color(197, 138, 255));
-        } else {
-            renderer2.setTextNonSelectionColor(Color.BLACK);
-            renderer2.setTextSelectionColor(new Color(197, 138, 255));
-        }
     }
 
     public JTree getTreeOfCollections() {
         return treeOfCollections;
     }
 
-    public JTree getTreeOfRequests() {
-        return treeOfRequests;
-    }
-
     public JButton getSaveButton() {
         return saveButton;
+    }
+
+    public DefaultMutableTreeNode getRootCollections() {
+        return rootCollections;
     }
 }

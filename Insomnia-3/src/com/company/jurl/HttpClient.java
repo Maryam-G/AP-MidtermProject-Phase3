@@ -87,16 +87,21 @@ public class HttpClient {
             responseHeaders = connection.getHeaderFields();
 
             //image preview body:
+            boolean flag = true;
             for(Map.Entry<String, List<String>> entry : responseHeaders.entrySet()) {
                 if(entry.getKey() != null){
                     if (entry.getKey().equals("Content-Type")) {
-                    if (entry.getValue().contains("image/png")) {
-                        isImage = true;
-                        saveImagePreviewResponse(url);
-                        break;
-                    }
+                        if (entry.getValue().contains("image/png")) {
+                            flag = false;
+                            isImage = true;
+                            saveImagePreviewResponse(url);
+                            break;
+                        }
                     }
                 }
+            }
+            if(flag){
+                isImage = false;
             }
 
             // time of response :

@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,6 +42,7 @@ public class Panel3 extends JPanel {
     private JPanel responseHeaderPanel;
     private ArrayList<HeaderItemPanel> headersList;
     private JButton copyButton;
+    private JPanel headersListPanel;
 
     /**
      * constructor method
@@ -103,10 +105,14 @@ public class Panel3 extends JPanel {
      */
     public void addResponseHeadersPanel(){
         responseHeaderPanel = new JPanel();
-        BoxLayout boxLayout = new BoxLayout(responseHeaderPanel, BoxLayout.Y_AXIS);
-        responseHeaderPanel.setLayout(boxLayout);
+//        BoxLayout boxLayout = new BoxLayout(responseHeaderPanel, BoxLayout.Y_AXIS);
+//        responseHeaderPanel.setLayout(boxLayout);
+        responseHeaderPanel.setLayout(new BorderLayout());
 
         headersList = new ArrayList<>();
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
 
         //button copy to clipboard :
 
@@ -119,7 +125,8 @@ public class Panel3 extends JPanel {
         copyButtonPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
         copyButtonPanel.add(copyButton);
 
-        responseHeaderPanel.add(copyButtonPanel);
+//        responseHeaderPanel.add(copyButtonPanel);
+        panel.add(copyButtonPanel, BorderLayout.NORTH);
 
         JTextField keyField = new JTextField(" key ");
         keyField.setBackground(new Color(207, 214, 210));
@@ -137,8 +144,16 @@ public class Panel3 extends JPanel {
         keyValuePanel.add(valueField);
         keyValuePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
 
-        responseHeaderPanel.add(keyValuePanel);
+//        responseHeaderPanel.add(keyValuePanel);
+        panel.add(keyValuePanel, BorderLayout.CENTER);
 
+        responseHeaderPanel.add(panel, BorderLayout.PAGE_START);
+
+        headersListPanel = new JPanel();
+        BoxLayout boxLayout2 = new BoxLayout(headersListPanel, BoxLayout.Y_AXIS);
+        headersListPanel.setLayout(boxLayout2);
+
+        responseHeaderPanel.add(headersListPanel, BorderLayout.CENTER);
     }
 
     /**
@@ -284,20 +299,56 @@ public class Panel3 extends JPanel {
     // -> phase 3:
 
     public void setHeadersPanel(Map<String, List<String>> responseHeaders){
-        String key ;
+
+//        headersListPanel = new JPanel();
+//        BoxLayout boxLayout2 = new BoxLayout(headersListPanel, BoxLayout.Y_AXIS);
+//        headersListPanel.setLayout(boxLayout2);
+
+        headersListPanel.removeAll();
+        headersListPanel.revalidate();
+        headersListPanel.repaint();
+
+//        headersList = new ArrayList<>();
+
+        String key = "";
         List<String> value ;
         for(Map.Entry<String, List<String>> entry : responseHeaders.entrySet()){
             if(entry.getKey() != null){
                 key = entry.getKey();
                 value = entry.getValue();
                 HeaderItemPanel headerItemPanel = new HeaderItemPanel(key, value);
-                responseBodyPanel.add(headerItemPanel);
+                headersListPanel.add(headerItemPanel);
+//                headersList.add(headerItemPanel);
             }
         }
+
+        responseHeaderPanel.add(headersListPanel, BorderLayout.CENTER);
+        responseHeaderPanel.setVisible(true);
+        updateUI();
     }
 
     public void setRawBodyPanel(String responseBody){
         rawText.setText(responseBody);
+    }
+
+    public void setPreviewBodyPanel(boolean isImage){
+        if(isImage){
+            addImageToPreviewPanel();
+        }else{
+            //todo :nashooood
+//            JPanel whitePanel = new JPanel();
+//
+//            previewPanel.add(whitePanel, BorderLayout.CENTER);
+//            responseBodyPanel.add(previewPanel, BorderLayout.CENTER);
+            radioButtonRaw.setSelected(true);
+            previewPanel.removeAll();
+            previewPanel.revalidate();
+            previewPanel.repaint();
+
+//            rawPanel.setVisible(true);
+//            previewPanel.setVisible(false);
+            updateUI();
+        }
     }
 
     public void setInformationPanel(String status, String size, String time){
@@ -328,5 +379,13 @@ public class Panel3 extends JPanel {
             }
 
         }
+    }
+
+    public JPanel getResponseBodyPanel() {
+        return responseBodyPanel;
+    }
+
+    public JPanel getResponseHeaderPanel() {
+        return responseHeaderPanel;
     }
 }
