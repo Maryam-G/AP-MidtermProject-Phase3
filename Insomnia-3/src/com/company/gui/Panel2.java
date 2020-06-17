@@ -398,20 +398,36 @@ public class Panel2 extends JPanel {
         requestHeaderPanel.setBackground(newColor);
     }
 
+    /**
+     * get send button
+     * @return sendButton field
+     */
     public JButton getSendButton() {
         return sendButton;
     }
 
+    /**
+     * get comboBox for select method of request
+     * @return comboBoxForMethod field
+     */
     public JComboBox getComboBoxForMethod() {
         return comboBoxForMethod;
     }
 
+    /**
+     * get text field of url address
+     * @return urlAddress field
+     */
     public JTextField getUrlAddress() {
         return urlAddress;
     }
 
     // -> phase 3 :
 
+    /**
+     * get headers of request from GUI
+     * @return headers of request
+     */
     public HashMap<String, String> getHeaders() {
         HashMap<String, String> headers = new HashMap<>();
         String key, value;
@@ -433,6 +449,10 @@ public class Panel2 extends JPanel {
         return headers;
     }
 
+    /**
+     * get body of request from GUI
+     * @return request body
+     */
     public HashMap<String, String> getBody() {
         HashMap<String, String> body = new HashMap<>();
         String key, value;
@@ -454,6 +474,10 @@ public class Panel2 extends JPanel {
         return body;
     }
 
+    /**
+     * show request headers in GUI
+     * @param headers request headers
+     */
     public void showRequestHeaders(HashMap<String, String> headers){
 
         BoxLayout boxLayout = new BoxLayout(requestHeaderPanel, BoxLayout.Y_AXIS);
@@ -473,6 +497,10 @@ public class Panel2 extends JPanel {
         }
     }
 
+    /**
+     * show request body in GUI
+     * @param body request body
+     */
     public void showRequestBodyFormData(HashMap<String, String> body){
 
         BoxLayout boxLayout = new BoxLayout(formDataPanel, BoxLayout.Y_AXIS);

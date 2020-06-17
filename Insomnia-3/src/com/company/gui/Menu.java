@@ -1,8 +1,5 @@
 package com.company.gui;
 
-import com.company.model.Setting;
-import com.company.utils.FileUtils;
-
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
@@ -313,11 +310,6 @@ public class Menu extends JMenuBar {
      */
     public JCheckBox getHideOnSystemTray() {
         return hideOnSystemTray;
-    }
-
-
-    public void setOptionsFrame(JFrame optionsFrame) {
-        this.optionsFrame = optionsFrame;
     }
 
 }

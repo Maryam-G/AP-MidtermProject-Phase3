@@ -54,7 +54,6 @@ public class Panel3 extends JPanel {
         this.setLayout(new BorderLayout());
         addInfoPanel();
 
-//        JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane = new JTabbedPane();
         tabbedPane.setFont(new Font("Calibri", 45, 18));
 
@@ -261,7 +260,6 @@ public class Panel3 extends JPanel {
             keyValuePanel.add(valueField);
             keyValuePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
 
-//            responseHeaderPanel.add(keyValuePanel);
             this.setLayout(new BorderLayout());
             this.add(keyValuePanel, BorderLayout.CENTER);
         }
@@ -283,6 +281,10 @@ public class Panel3 extends JPanel {
 
     // -> phase 3:
 
+    /**
+     * set response headers panel
+     * @param responseHeaders headers of response
+     */
     public void setHeadersPanel(Map<String, List<String>> responseHeaders){
 
         headersListPanel.removeAll();
@@ -299,7 +301,6 @@ public class Panel3 extends JPanel {
             if(entry.getKey() != null){
                 key = entry.getKey();
                 value = entry.getValue();
-                System.out.println(key + ".............." + value);
                 headerItemPanel = new HeaderItemPanel(key, value);
                 headersListPanel.add(headerItemPanel);
             }
@@ -308,14 +309,21 @@ public class Panel3 extends JPanel {
         headersListPanel.setVisible(true);
         responseHeaderPanel.add(headersListPanel, BorderLayout.CENTER);
 
-//        responseHeaderPanel.setVisible(true);
         updateUI();
     }
 
+    /**
+     * set raw body panel
+     * @param responseBody body of response
+     */
     public void setRawBodyPanel(String responseBody){
         rawText.setText(responseBody);
     }
 
+    /**
+     * set preview body panel
+     * @param isImage content type of response is image/png or not
+     */
     public void setPreviewBodyPanel(boolean isImage){
         if(isImage){
             addImageToPreviewPanel();
@@ -329,12 +337,21 @@ public class Panel3 extends JPanel {
         }
     }
 
+    /**
+     * set info panel (status , size , time)
+     * @param status response status
+     * @param size response size
+     * @param time response time
+     */
     public void setInformationPanel(String status, String size, String time){
         statusField.setText(status);
         sizeField.setText(size);
         timeField.setText(time);
     }
 
+    /**
+     * add image to preview panel
+     */
     public void addImageToPreviewPanel(){
 
         previewPanel.add(new LoadImageApp(), BorderLayout.CENTER);
@@ -348,6 +365,9 @@ public class Panel3 extends JPanel {
         updateUI();
     }
 
+    /**
+     * An inner class for loading image
+     */
     private class LoadImageApp extends Component {
 
         BufferedImage img;
@@ -366,34 +386,42 @@ public class Panel3 extends JPanel {
         }
     }
 
-    public JPanel getResponseBodyPanel() {
-        return responseBodyPanel;
-    }
-
-    public JPanel getResponseHeaderPanel() {
-        return responseHeaderPanel;
-    }
-
-    public JPanel getHeadersListPanel() {
-        return headersListPanel;
-    }
-
+    /**
+     * get tabbed pane of response (headers and body)
+     * @return tabbedPane field
+     */
     public JTabbedPane getTabbedPane() {
         return tabbedPane;
     }
 
+    /**
+     * get preview panel
+     * @return previewPanel field
+     */
     public JPanel getPreviewPanel() {
         return previewPanel;
     }
 
+    /**
+     * get radio button for raw body
+     * @return radioButtonRaw field
+     */
     public JRadioButton getRadioButtonRaw() {
         return radioButtonRaw;
     }
 
+    /**
+     * get radio button for preview body
+     * @return radioButtonPreview field
+     */
     public JRadioButton getRadioButtonPreview() {
         return radioButtonPreview;
     }
 
+    /**
+     * get copy button
+     * @return copyButton field
+     */
     public JButton getCopyButton() {
         return copyButton;
     }

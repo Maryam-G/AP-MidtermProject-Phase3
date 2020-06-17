@@ -82,7 +82,6 @@ public class InsomniaFrame extends JFrame{
             //todo :
         }else if(menu.getHideOnSystemTray().isSelected()){
             //todo:
-//            hideToSystemTray();
             menu.getExit().addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -253,6 +252,12 @@ public class InsomniaFrame extends JFrame{
 
     // -> phase 3:
 
+    /**
+     * send request from GUI
+     * @param hasSaveArgument saving request or not
+     * @param collectionName name of selected collection for saving request
+     * @param requestName name of request
+     */
     public void sendRequestFromGUI(boolean hasSaveArgument, String collectionName, String requestName){
         controller.setUrlAddress(panel2.getUrlAddress().getText());
         controller.setMethod(panel2.getComboBoxForMethod().getSelectedItem().toString());
@@ -262,6 +267,9 @@ public class InsomniaFrame extends JFrame{
         controller.createJurl(hasSaveArgument, collectionName, requestName);
     }
 
+    /**
+     * show response headers and body in GUI
+     */
     public void showResponseInGUI(){
         panel3.setHeadersPanel(controller.getResponseHeaders());
 
@@ -284,6 +292,9 @@ public class InsomniaFrame extends JFrame{
         panel3.updateUI();
     }
 
+    /**
+     * An inner class for sending request from GUI with send button
+     */
     private class SendButtonHandler implements ActionListener{
 
         @Override
@@ -295,6 +306,9 @@ public class InsomniaFrame extends JFrame{
         }
     }
 
+    /**
+     * show request headers and body in GUI
+     */
     public void showRequestInGUI(){
         panel2.getUrlAddress().setText(controller.getUrlAddress());
         panel2.getComboBoxForMethod().setSelectedItem(controller.getMethod());
@@ -302,6 +316,9 @@ public class InsomniaFrame extends JFrame{
         panel2.showRequestBodyFormData(controller.getRequestBody());
     }
 
+    /**
+     * open a request in GUI
+     */
     public void openRequestInGUI(){
         controller.setUrlAddress(selectedRequest.getUrlString());
         controller.setMethod(selectedRequest.getMethod());
@@ -317,6 +334,9 @@ public class InsomniaFrame extends JFrame{
         panel3.updateUI();
     }
 
+    /**
+     * An inner class for handling events that related to tree of collections
+     */
     private class TreeOfCollectionsHandler implements TreeSelectionListener {
 
         @Override
@@ -342,6 +362,9 @@ public class InsomniaFrame extends JFrame{
         }
     }
 
+    /**
+     * An inner class for saving request with save button
+     */
     private class SaveButtonHandler implements ActionListener{
 
         @Override
@@ -439,6 +462,9 @@ public class InsomniaFrame extends JFrame{
         }
     }
 
+    /**
+     * An inner class for copy response headers to clipboard
+     */
     private class CopyButtonHandler implements ActionListener{
 
         @Override
@@ -455,6 +481,9 @@ public class InsomniaFrame extends JFrame{
         }
     }
 
+    /**
+     * hide app to system tray
+     */
     public void hideToSystemTray(){
         if (SystemTray.isSupported()) {
             TrayIcon trayIcon;

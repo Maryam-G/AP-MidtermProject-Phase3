@@ -17,7 +17,7 @@ import java.util.Map;
  *
  * @author Maryam Goli
  */
-public class Jurl {
+public class Jurl{
 
     private String input;
     private String[] partsOfInput;
@@ -63,7 +63,9 @@ public class Jurl {
         hasDataArguments = validData = false;
 
         checkRequest();
+
     }
+
 
     /**
      * check arguments and parts of input
@@ -540,23 +542,44 @@ public class Jurl {
 
     // -> phase 3:
 
+    /**
+     * get response headers
+     * @return responseHeaders field
+     */
     public Map<String, List<String>> getResponseHeaders() {
         return responseHeaders;
     }
 
+    /**
+     * get response body
+     * @return responseBody field
+     */
     public String getResponseBody() {
         return responseBody;
     }
 
+    /**
+     * get response status
+     * @return status field
+     */
     public String getStatus() {
         return status;
     }
 
+    /**
+     * get response size
+     * @return size field
+     */
     public String getSize() {
         return size;
     }
 
+    /**
+     * get response time
+     * @return time field
+     */
     public String getTime() {
         return time;
     }
+
 }

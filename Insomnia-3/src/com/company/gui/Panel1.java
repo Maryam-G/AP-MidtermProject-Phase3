@@ -88,6 +88,9 @@ public class Panel1 extends JPanel {
         this.add(panelForInsomniaLabel, BorderLayout.PAGE_START);
     }
 
+    /**
+     * add panel for showing list of all collections
+     */
     public void addPanelForCollections() {
         panelForCollections = new JPanel();
         panelForCollections.setLayout(new BorderLayout(1, 1));
@@ -101,7 +104,6 @@ public class Panel1 extends JPanel {
 
         newCollection = new JButton("New Collection");
         newCollection.setFont(new Font("Calibri", 45, 15));
-        //todo : button handler
         newCollection.addActionListener(new ButtonHandler());
 
         JPanel panel = new JPanel();
@@ -117,6 +119,9 @@ public class Panel1 extends JPanel {
 
     }
 
+    /**
+     * add list of collections
+     */
     public void addListOfCollections(){
 
         treeOfCollections = new JTree();
@@ -131,6 +136,9 @@ public class Panel1 extends JPanel {
 
     }
 
+    /**
+     * an inner class for handling events that related to creating new collection
+     */
     private class ButtonHandler implements ActionListener {
 
         @Override
@@ -175,7 +183,6 @@ public class Panel1 extends JPanel {
                     Jurl jurlApp = new Jurl(">jurl create " + nameOfNewCollection);
 
                     DefaultMutableTreeNode parentNode = rootCollections;
-                    TreePath parentPath = treeOfCollections.getSelectionPath();
 
                     DefaultMutableTreeNode newFolder = new DefaultMutableTreeNode(nameOfNewCollection, true);
                     DefaultTreeModel model = (DefaultTreeModel) treeOfCollections.getModel();
@@ -204,14 +211,26 @@ public class Panel1 extends JPanel {
         }
     }
 
+    /**
+     * get tree of collections
+     * @return treeOfCollections field
+     */
     public JTree getTreeOfCollections() {
         return treeOfCollections;
     }
 
+    /**
+     * get save button
+     * @return saveButton field
+     */
     public JButton getSaveButton() {
         return saveButton;
     }
 
+    /**
+     * get root collections
+     * @return rootCollections field
+     */
     public DefaultMutableTreeNode getRootCollections() {
         return rootCollections;
     }

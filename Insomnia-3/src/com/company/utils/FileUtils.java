@@ -3,12 +3,8 @@ package com.company.utils;
 import com.company.model.Request;
 import com.company.model.Setting;
 
-import javax.swing.*;
-import javax.swing.filechooser.FileView;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
-import java.awt.*;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,6 +29,10 @@ public class FileUtils {
         }
     }
 
+    /**
+     * write object with type "Setting" in a file
+     * @param setting object with type "Setting"
+     */
     public static void writeSettingInFile(Setting setting){
         File file = new File("./Setting.txt");
         try (ObjectOutputStream objectOutput = new ObjectOutputStream(new FileOutputStream(file))){
@@ -44,6 +44,10 @@ public class FileUtils {
         }
     }
 
+    /**
+     * read object "Setting" from file
+     * @return object with type "Setting"
+     */
     public static Setting readSettingFromFile(){
         File file = new File("./Setting.txt");
         try (ObjectInputStream objectInput = new ObjectInputStream(new FileInputStream(file))){
@@ -92,7 +96,6 @@ public class FileUtils {
             e.printStackTrace();
         }
     }
-
 
     /**
      * read object "Request" from file
@@ -182,6 +185,11 @@ public class FileUtils {
 
     // -> phase 3:
 
+    /**
+     * create list of all collections
+     * @param root root of collections
+     * @return model of tree
+     */
     public static DefaultTreeModel createListOfAllCollections(DefaultMutableTreeNode root){
         File fileRoot = new File("./Requests/AllCollections/");
 

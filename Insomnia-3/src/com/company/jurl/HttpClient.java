@@ -147,15 +147,26 @@ public class HttpClient {
         return responseBody;
     }
 
+    /**
+     * get response status
+     * @return status field
+     */
     public String getStatus() {
         return status;
     }
 
-
+    /**
+     * get response size
+     * @return size field
+     */
     public String getSize() {
         return size;
     }
 
+    /**
+     * get response time
+     * @return time field
+     */
     public String getTime() {
         return time;
     }
@@ -192,6 +203,10 @@ public class HttpClient {
         bufferedOutputStream.close();
     }
 
+    /**
+     * save image of preview body of response
+     * @param url url address
+     */
     public void saveImagePreviewResponse(URL url){
         String path = "./image.png";
         BufferedImage image = null;
@@ -207,6 +222,10 @@ public class HttpClient {
         }
     }
 
+    /**
+     * return that content type of response is image/png or not
+     * @return isImage field
+     */
     public static boolean isImage() {
         return isImage;
     }
