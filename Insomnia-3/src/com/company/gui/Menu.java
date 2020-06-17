@@ -1,5 +1,8 @@
 package com.company.gui;
 
+import com.company.model.Setting;
+import com.company.utils.FileUtils;
+
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
@@ -47,6 +50,7 @@ public class Menu extends JMenuBar {
      * constructor method
      */
     public Menu(){
+
         initApplicationMenu();
         initViewMenu();
         initHelpMenu();
@@ -88,8 +92,8 @@ public class Menu extends JMenuBar {
         optionsFrame.setResizable(false);
 
         lightTheme = new JCheckBox("Light Theme");
-        darkTheme = new JCheckBox("Dark Theme", true);
-        exitFromApp = new JCheckBox("Exit From App", true);
+        darkTheme = new JCheckBox("Dark Theme");
+        exitFromApp = new JCheckBox("Exit From App");
         hideOnSystemTray = new JCheckBox("Hide On System Tray");
 
         JPanel exitPanel = new JPanel();
@@ -175,13 +179,36 @@ public class Menu extends JMenuBar {
         aboutFrame.add(aboutText);
 
         helpItemText = new JTextArea();
-        helpItemText.setFont(new Font("Calibri", 14, 14));
-        helpItemText.setText(" ... :)");
+        helpItemText.setFont(new Font("Calibri", 14, 16));
+        String help =
+                "<-> PANEL-1 -> COLLECTIONS:\n" +
+                "       * [Button]" + "              {Save}: saving request in selected collection" + "\n" +
+                "       * [Button]" + "              {Create Collection}: create a new collection" + "\n" +
+                "       * [Panel]" + "                {All Collections}: showing list of all collections and saved requests" + "\n\n" +
+                "<-> PANEL-2 -> SET REQUEST:\n" +
+                "       * [Combo-Box]" + "          {-}: select method of request -> GET-POST-PUT-DELETE" + "\n" +
+                "       * [Text-Field]" + "             {-}: enter URL address of request here" + "\n" +
+                "       * [Button]" + "                  {Send}: send your request and get response " + "\n" +
+                "       * [Tab]" + "                      {Body}: set body of your request in this part -> No-Body and Form-Data" + "\n" +
+                "       * [Radio-Button]" + "       {No-Body}: no body for request" + "\n" +
+                "       * [Radio-Button]" + "       {Form-Data}: set Multipart/Form-Data body for request" + "\n" +
+                "       * [Tab]" + "                      {Headers}: set headers of request in this part" + "\n\n" +
+                "<-> PANEL-3 -> SHOW RESPONSE :\n" +
+                "       * [Label]" +  "                    {Status}: showing status of response (for example : 200 OK)" + "\n" +
+                "       * [Label]" + "                    {Time}: showing response time " + "\n" +
+                "       * [Label]" + "                    {Size}: showing size of response body" + "\n" +
+                "       * [Tab]" + "                       {Body}: showing response body -> Raw and Preview " + "\n" +
+                "       * [Radio-Button]" + "        {Raw}: for showing response body in text format" + "\n" +
+                "       * [Radio-Button]" + "        {Preview}: for showing image with <image/png> content type " + "\n" +
+                "       * [Tab]" + "                       {Headers}: showing headers of response " + "\n" +
+                "       * [Button]" + "                  {Copy to Clipboard}: copy response headers to clipboard" + "\n";
+        helpItemText.setText(help);
+
         helpItemText.setEditable(false);
         helpItemFrame = new JFrame("Help");
-        helpItemFrame.setSize(300, 300);
-        helpItemFrame.setLocation(800, 400);
-        helpItemFrame.add(helpItemText);
+        helpItemFrame.setSize(700, 700);
+        helpItemFrame.setLocation(650, 150);
+        helpItemFrame.add(new JScrollPane(helpItemText));
     }
 
     /**
@@ -287,5 +314,11 @@ public class Menu extends JMenuBar {
     public JCheckBox getHideOnSystemTray() {
         return hideOnSystemTray;
     }
+
+
+    public void setOptionsFrame(JFrame optionsFrame) {
+        this.optionsFrame = optionsFrame;
+    }
+
 }
 

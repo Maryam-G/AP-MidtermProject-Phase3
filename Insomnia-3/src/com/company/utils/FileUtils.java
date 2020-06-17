@@ -1,6 +1,7 @@
 package com.company.utils;
 
 import com.company.model.Request;
+import com.company.model.Setting;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileView;
@@ -25,6 +26,37 @@ public class FileUtils {
         boolean directoryCreated0 = new File("./Requests/").mkdirs();
         boolean directoryCreated1 = new File("./Requests/AllCollections/").mkdirs();
         boolean directoryCreated2 = new File("./Responses/").mkdirs();
+
+        if(!(new File("./Setting.txt").exists())){
+            Setting setting = new Setting(true, false);
+            writeSettingInFile(setting);
+        }
+    }
+
+    public static void writeSettingInFile(Setting setting){
+        File file = new File("./Setting.txt");
+        try (ObjectOutputStream objectOutput = new ObjectOutputStream(new FileOutputStream(file))){
+            objectOutput.writeObject(setting);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Setting readSettingFromFile(){
+        File file = new File("./Setting.txt");
+        try (ObjectInputStream objectInput = new ObjectInputStream(new FileInputStream(file))){
+            Setting setting = (Setting) objectInput.readObject();
+            return setting;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**

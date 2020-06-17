@@ -125,6 +125,10 @@ public class Panel1 extends JPanel {
         treeOfCollections.setModel(FileUtils.createListOfAllCollections(rootCollections));
         panelForCollections.add(new JScrollPane(treeOfCollections), BorderLayout.CENTER);
 
+        DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) (treeOfCollections.getCellRenderer());
+        renderer.setFont(new Font("Calibri", 45, 16));
+        treeOfCollections.setRowHeight(30);
+
     }
 
     private class ButtonHandler implements ActionListener {

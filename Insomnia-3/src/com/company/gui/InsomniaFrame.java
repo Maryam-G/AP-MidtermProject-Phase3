@@ -4,6 +4,7 @@ import com.company.controller.Controller;
 import com.company.jurl.HttpClient;
 import com.company.jurl.Jurl;
 import com.company.model.Request;
+import com.company.model.Setting;
 import com.company.utils.FileUtils;
 
 import javax.swing.*;
@@ -17,10 +18,7 @@ import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 import java.io.File;
 import java.net.HttpURLConnection;
 import java.sql.SQLOutput;
@@ -36,6 +34,7 @@ import java.util.Map;
  */
 public class InsomniaFrame extends JFrame{
 
+    private Setting setting;
     private Controller controller;
     private Request selectedRequest;
 
@@ -54,6 +53,8 @@ public class InsomniaFrame extends JFrame{
      */
     public InsomniaFrame(){
 
+        setting = FileUtils.readSettingFromFile();
+
         this.setTitle("Insomnia");
         this.setSize(new Dimension(1200, 700));
         this.setLocation(400, 150);
@@ -64,6 +65,31 @@ public class InsomniaFrame extends JFrame{
 
         addMenu();
         addPanels();
+
+        if(menu.getDarkTheme().isSelected()){
+            setTheme(Color.DARK_GRAY);
+        }else if(menu.getLightTheme().isSelected()){
+            setTheme(Color.LIGHT_GRAY);
+        }
+
+        if(menu.getExitFromApp().isSelected()){
+            menu.getExit().addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.exit(0);
+                }
+            });
+            //todo :
+        }else if(menu.getHideOnSystemTray().isSelected()){
+            //todo:
+//            hideToSystemTray();
+            menu.getExit().addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    setExtendedState(JFrame.ICONIFIED);
+                }
+            });
+        }
 
         controller = new Controller();
     }
@@ -77,6 +103,22 @@ public class InsomniaFrame extends JFrame{
 
         visibilityOfPanel1 = true;
         isFullScreen = false;
+
+        if(setting.hasDarkTheme()){
+            menu.getDarkTheme().setSelected(true);
+            menu.getLightTheme().setSelected(false);
+        }else{
+            menu.getDarkTheme().setSelected(false);
+            menu.getLightTheme().setSelected(true);
+        }
+
+        if(setting.isHideOnSystemTray()){
+            menu.getHideOnSystemTray().setSelected(true);
+            menu.getExitFromApp().setSelected(false);
+        }else{
+            menu.getHideOnSystemTray().setSelected(false);
+            menu.getExitFromApp().setSelected(true);
+        }
 
         menu.getOptions().addActionListener(new MenuHandler());
         menu.getExit().addActionListener(new MenuHandler());
@@ -165,8 +207,10 @@ public class InsomniaFrame extends JFrame{
             } else if (e.getSource().equals(menu.getExit())) {
                 if(menu.getExitFromApp().isSelected()){
                     //todo : exit
+                    System.exit(0);
                 }else if(menu.getHideOnSystemTray().isSelected()){
-                    //todo : system tray
+                    hideToSystemTray();
+//                    //todo : system tray
                 }
                 //todo : pak kardan e ezafiat
 //                insomniaFrame.dispose();
@@ -182,13 +226,28 @@ public class InsomniaFrame extends JFrame{
         public void itemStateChanged(ItemEvent e) {
             if (e.getSource().equals(menu.getLightTheme())) {
                 setTheme(Color.LIGHT_GRAY);
+                setting.setHasDarkTheme(false);
             } else if (e.getSource().equals(menu.getDarkTheme())) {
                 setTheme(Color.DARK_GRAY);
+                setting.setHasDarkTheme(true);
             } else if (e.getSource().equals(menu.getExitFromApp())) {
-                InsomniaFrame.this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                menu.getExit().addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        System.exit(0);
+                    }
+                });
+                setting.setHideOnSystemTray(false);
             } else if (e.getSource().equals(menu.getHideOnSystemTray())) {
-                InsomniaFrame.this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+                menu.getExit().addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        setExtendedState(JFrame.ICONIFIED);
+                    }
+                });
+                setting.setHideOnSystemTray(true);
             }
+            FileUtils.writeSettingInFile(setting);
         }
     }
 
@@ -362,8 +421,14 @@ public class InsomniaFrame extends JFrame{
                     InsomniaFrame.this.sendRequestFromGUI(true, nameOfSelectedCollection, nameOfNewRequest);
 
                     DefaultMutableTreeNode newSavedRequest = new DefaultMutableTreeNode(nameOfNewRequest+".txt");
-                    DefaultMutableTreeNode parentNode = new DefaultMutableTreeNode(nameOfSelectedCollection);
 
+                    DefaultMutableTreeNode parentNode = new DefaultMutableTreeNode();
+                    for(int i = 0; i < panel1.getRootCollections().getChildCount(); i++){
+                        if(panel1.getRootCollections().getChildAt(i).toString().equals(nameOfSelectedCollection)){
+                             parentNode = (DefaultMutableTreeNode) panel1.getRootCollections().getChildAt(i);
+                             break;
+                        }
+                    }
                     DefaultTreeModel model = (DefaultTreeModel) panel1.getTreeOfCollections().getModel();
                     model.insertNodeInto(newSavedRequest, parentNode, parentNode.getChildCount());
                     panel1.getTreeOfCollections().scrollPathToVisible(new TreePath(newSavedRequest.getPath()));
@@ -390,4 +455,54 @@ public class InsomniaFrame extends JFrame{
         }
     }
 
+    public void hideToSystemTray(){
+        if (SystemTray.isSupported()) {
+            TrayIcon trayIcon;
+            SystemTray tray;
+            tray = SystemTray.getSystemTray();
+
+            Image image = Toolkit.getDefaultToolkit().getImage("./src/icon.png");
+            PopupMenu popup = new PopupMenu();
+            MenuItem defaultItem = new MenuItem("Open");
+            defaultItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    setVisible(true);
+                    setExtendedState(JFrame.NORMAL);
+                }
+            });
+            popup.add(defaultItem);
+            trayIcon = new TrayIcon(image, "SystemTray", popup);
+            trayIcon.setImageAutoSize(true);
+
+            addWindowStateListener(new WindowStateListener() {
+                public void windowStateChanged(WindowEvent e) {
+                    if (e.getNewState() == ICONIFIED) {
+                        try {
+                            tray.add(trayIcon);
+                            setVisible(false);
+                        } catch (AWTException ex) {
+                        }
+                    }
+                    if (e.getNewState() == 7) {
+                        try {
+                            tray.add(trayIcon);
+                            setVisible(false);
+                        } catch (AWTException ex) {
+                        }
+                    }
+                    if (e.getNewState() == MAXIMIZED_BOTH) {
+                        tray.remove(trayIcon);
+                        setVisible(true);
+                    }
+                    if (e.getNewState() == NORMAL) {
+                        tray.remove(trayIcon);
+                        setVisible(true);
+                    }
+                }
+            });
+            setIconImage(Toolkit.getDefaultToolkit().getImage("./src/icon.png"));
+            setVisible(true);
+        } else {
+        }
+    }
 }

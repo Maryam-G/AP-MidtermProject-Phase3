@@ -65,7 +65,7 @@ public class Panel3 extends JPanel {
 
         // add panels to tabs of tabbedPane
         tabbedPane.add("Body",responseBodyPanel);
-        tabbedPane.add("Header", responseHeaderPanel);
+        tabbedPane.add("Headers", responseHeaderPanel);
 
         this.add(tabbedPane, BorderLayout.CENTER);
     }
@@ -217,7 +217,7 @@ public class Panel3 extends JPanel {
         previewPanel = new JPanel();
         previewPanel.setLayout(new BorderLayout());
     }
-    
+
     /**
      * An inner class for handling events that related to tabs of response body
      */
