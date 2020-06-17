@@ -79,9 +79,7 @@ public class InsomniaFrame extends JFrame{
                     System.exit(0);
                 }
             });
-            //todo :
         }else if(menu.getHideOnSystemTray().isSelected()){
-            //todo:
             menu.getExit().addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -205,14 +203,10 @@ public class InsomniaFrame extends JFrame{
                 menu.getHelpItemFrame().setVisible(true);
             } else if (e.getSource().equals(menu.getExit())) {
                 if(menu.getExitFromApp().isSelected()){
-                    //todo : exit
                     System.exit(0);
                 }else if(menu.getHideOnSystemTray().isSelected()){
                     hideToSystemTray();
-//                    //todo : system tray
                 }
-                //todo : pak kardan e ezafiat
-//                insomniaFrame.dispose();
             }
         }
     }
@@ -356,7 +350,6 @@ public class InsomniaFrame extends JFrame{
                     Request currentRequest = FileUtils.readRequestFromFile(file);
                     selectedRequest = currentRequest;
                     openRequestInGUI();
-                    //todo : por kardan e gui
                 }
             }
         }
