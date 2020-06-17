@@ -15,6 +15,8 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -24,6 +26,8 @@ import java.net.HttpURLConnection;
 import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A class for showing main frame of Insomnia (GUI)
@@ -99,6 +103,7 @@ public class InsomniaFrame extends JFrame{
         panel2.getSendButton().addActionListener(new SendButtonHandler());
 
         panel3 = new Panel3();
+        panel3.getCopyButton().addActionListener(new CopyButtonHandler());
 
         JSplitPane splitPaneForPanel2And3 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panel2, panel3);
         splitPaneForPanel2And3.setResizeWeight(0.5);
@@ -209,25 +214,13 @@ public class InsomniaFrame extends JFrame{
         panel3.setInformationPanel(status, size, time);
 
         panel3.setPreviewBodyPanel(HttpClient.isImage());
-//        if(HttpClient.isImage()){
-//            panel3.addImageToPreviewPanel();
-//        }
 
-        // todo : ezafe
         panel3.getTabbedPane().getComponentAt(1).repaint();
         panel3.getTabbedPane().getComponentAt(0).repaint();
         panel3.getRadioButtonRaw().setSelected(true);
         panel3.getRadioButtonPreview().setSelected(false);
 
         panel3.getPreviewPanel().setVisible(false);
-
-//        panel3.getTabbedPane().setVisible(false);
-//        JTabbedPane tabbedPane = new JTabbedPane();
-//        tabbedPane.add("Body", panel3.getResponseBodyPanel());
-//        tabbedPane.add("Headers", panel3.getResponseHeaderPanel());
-//        tabbedPane.add("kjh", panel3.getHeadersListPanel());
-
-//        panel3.add(tabbedPane, BorderLayout.CENTER);
 
         panel3.updateUI();
     }
@@ -381,8 +374,20 @@ public class InsomniaFrame extends JFrame{
         }
     }
 
+    private class CopyButtonHandler implements ActionListener{
 
-    public Panel3 getPanel3() {
-        return panel3;
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if(e.getSource().equals(panel3.getCopyButton())){
+                String headersContent = "Response headers : \n\n";
+                for(Map.Entry<String, List<String>> entry : controller.getResponseHeaders().entrySet()){
+                    headersContent += entry.getKey() + ": " + entry.getValue() + "\n";
+                }
+                StringSelection stringSelection = new StringSelection(headersContent);
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                clipboard.setContents(stringSelection, null);
+            }
+        }
     }
+
 }

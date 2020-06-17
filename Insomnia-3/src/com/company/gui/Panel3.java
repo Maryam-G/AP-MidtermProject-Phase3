@@ -3,6 +3,8 @@ package com.company.gui;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -42,7 +44,6 @@ public class Panel3 extends JPanel {
 
     //header panel :
     private JPanel responseHeaderPanel;
-    private ArrayList<HeaderItemPanel> headersList;
     private JButton copyButton;
     private JPanel headersListPanel;
 
@@ -108,11 +109,7 @@ public class Panel3 extends JPanel {
      */
     public void addResponseHeadersPanel(){
         responseHeaderPanel = new JPanel();
-//        BoxLayout boxLayout = new BoxLayout(responseHeaderPanel, BoxLayout.Y_AXIS);
-//        responseHeaderPanel.setLayout(boxLayout);
         responseHeaderPanel.setLayout(new BorderLayout());
-
-        headersList = new ArrayList<>();
 
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
@@ -121,14 +118,12 @@ public class Panel3 extends JPanel {
 
         copyButton = new JButton("Copy to Clipboard");
         copyButton.setFont(new Font("Calibri", 45, 15));
-        copyButton.addActionListener(new CopyButtonHandler());
 
         JPanel copyButtonPanel = new JPanel();
         copyButtonPanel.setLayout(new GridLayout(1, 1));
         copyButtonPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
         copyButtonPanel.add(copyButton);
 
-//        responseHeaderPanel.add(copyButtonPanel);
         panel.add(copyButtonPanel, BorderLayout.NORTH);
 
         JTextField keyField = new JTextField(" key ");
@@ -147,7 +142,6 @@ public class Panel3 extends JPanel {
         keyValuePanel.add(valueField);
         keyValuePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
 
-//        responseHeaderPanel.add(keyValuePanel);
         panel.add(keyValuePanel, BorderLayout.CENTER);
 
         responseHeaderPanel.add(panel, BorderLayout.PAGE_START);
@@ -184,10 +178,6 @@ public class Panel3 extends JPanel {
         responseBodyPanel = new JPanel();
         responseBodyPanel.setLayout(new BorderLayout());
 
-//        responseBodyPanel.add(new JScrollPane(buttonGroupPanelForBody), BorderLayout.NORTH);
-//        responseBodyPanel.add(new JScrollPane(previewPanel), BorderLayout.CENTER);
-//        responseBodyPanel.add(new JScrollPane(rawPanel), BorderLayout.CENTER);
-
         responseBodyPanel.add(buttonGroupPanelForBody, BorderLayout.NORTH);
         responseBodyPanel.add(previewPanel, BorderLayout.CENTER);
         responseBodyPanel.add(rawPanel, BorderLayout.CENTER);
@@ -217,8 +207,6 @@ public class Panel3 extends JPanel {
         rawScrollPane = new JScrollPane(textPanel);
         rawPanel.add(rawScrollPane, BorderLayout.CENTER);
 
-
-//        rawPanel.add(new JScrollPane(textPanel), BorderLayout.CENTER);
     }
 
     /**
@@ -229,21 +217,7 @@ public class Panel3 extends JPanel {
         previewPanel = new JPanel();
         previewPanel.setLayout(new BorderLayout());
     }
-
-    //todo : copy button handler
-    /**
-     * An inner class for handling function of "Copy to Clipboard" button
-     */
-    private class CopyButtonHandler implements ActionListener{
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if(e.getSource().equals(copyButton)){
-
-            }
-        }
-    }
-
+    
     /**
      * An inner class for handling events that related to tabs of response body
      */
@@ -253,15 +227,10 @@ public class Panel3 extends JPanel {
             // panel 3 :
             if (radioButtonRaw.isSelected()) {
                 rawPanel.setVisible(true);
-                //todo : pak
-//                responseBodyPanel.add(buttonGroupPanelForBody, BorderLayout.NORTH);
-//                responseBodyPanel.add(rawPanel, BorderLayout.CENTER);
                 previewPanel.setVisible(false);
                 updateUI();
             } else if (radioButtonPreview.isSelected()) {
                 previewPanel.setVisible(true);
-                //todo : pak
-//                responseBodyPanel.add(previewPanel, BorderLayout.CENTER);
                 rawPanel.setVisible(false);
                 updateUI();
             }
@@ -316,18 +285,12 @@ public class Panel3 extends JPanel {
 
     public void setHeadersPanel(Map<String, List<String>> responseHeaders){
 
-//        headersListPanel = new JPanel();
-//        BoxLayout boxLayout2 = new BoxLayout(headersListPanel, BoxLayout.Y_AXIS);
-//        headersListPanel.setLayout(boxLayout2);
-
         headersListPanel.removeAll();
         headersListPanel.revalidate();
         headersListPanel.repaint();
 
         BoxLayout boxLayout = new BoxLayout(headersListPanel, BoxLayout.Y_AXIS);
         headersListPanel.setLayout(boxLayout);
-
-//        headersList = new ArrayList<>();
 
         String key = "";
         List<String> value ;
@@ -339,7 +302,6 @@ public class Panel3 extends JPanel {
                 System.out.println(key + ".............." + value);
                 headerItemPanel = new HeaderItemPanel(key, value);
                 headersListPanel.add(headerItemPanel);
-//                headersList.add(headerItemPanel);
             }
         }
 
@@ -356,25 +318,13 @@ public class Panel3 extends JPanel {
 
     public void setPreviewBodyPanel(boolean isImage){
         if(isImage){
-
-//            previewPanel.removeAll();
-//            previewPanel.revalidate();
-//            previewPanel.repaint();
-
             addImageToPreviewPanel();
         }else{
-            //todo :nashooood
-//            JPanel whitePanel = new JPanel();
-//
-//            previewPanel.add(whitePanel, BorderLayout.CENTER);
-//            responseBodyPanel.add(previewPanel, BorderLayout.CENTER);
             radioButtonRaw.setSelected(true);
             previewPanel.removeAll();
             previewPanel.revalidate();
             previewPanel.repaint();
 
-//            rawPanel.setVisible(true);
-//            previewPanel.setVisible(false);
             updateUI();
         }
     }
@@ -386,31 +336,14 @@ public class Panel3 extends JPanel {
     }
 
     public void addImageToPreviewPanel(){
-//        previewPanel = new JPanel();
-//        previewPanel.setLayout(new BorderLayout());
-
-//        JPanel panel = new JPanel();
-//
-//        panel.setLayout(new BorderLayout());
-//        imagePanel = new JPanel();
-//        imagePanel.setLayout(new BorderLayout());
-//        imagePanel.add(new LoadImageApp(), BorderLayout.CENTER);
-//        imagePanel.setVisible(true);
-////
-////        previewPanel.setLayout(new BorderLayout());
-//        previewPanel.add(imagePanel, BorderLayout.CENTER);
-
 
         previewPanel.add(new LoadImageApp(), BorderLayout.CENTER);
 
         responseBodyPanel.add(previewPanel, BorderLayout.CENTER);
-        previewPanel.setVisible(false);
-
 
         radioButtonRaw.setSelected(true);
         rawPanel.setVisible(true);
-
-//        tabbedPane.getComponentAt(0).repaint();
+        previewPanel.setVisible(false);
 
         updateUI();
     }
@@ -459,5 +392,9 @@ public class Panel3 extends JPanel {
 
     public JRadioButton getRadioButtonPreview() {
         return radioButtonPreview;
+    }
+
+    public JButton getCopyButton() {
+        return copyButton;
     }
 }
